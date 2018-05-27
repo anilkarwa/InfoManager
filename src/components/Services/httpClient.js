@@ -22,28 +22,32 @@ class Axios {
     })
   }
   getMainMenu () {
-    const mainMenuUrl = 'http://47.23.106.203/InfoManager/api/MainMenu?database=InfoManager'
+    const databaseName = localStorage.getItem('DatabaseName')
+    const mainMenuUrl = 'http://47.23.106.203/InfoManager/api/MainMenu?database=' + databaseName
     return this.axios.get(mainMenuUrl, {timeout: 5000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })
   }
-  getTableHeader () {
-    const tableHeaderUrl = 'http://47.23.106.203/InfoManager/api/TableHeaderData?database=InfoManager&groupid=2'
+  getTableHeader (groupid) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableHeaderUrl = 'http://47.23.106.203/InfoManager/api/TableHeaderData?database=' + databaseName + '&groupid=' + groupid
     return this.axios.get(tableHeaderUrl, {timeout: 5000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })
   }
-  getTableData () {
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableData?database=InfoManager&groupid=2'
+  getTableData (groupid) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableData?database=' + databaseName + '&groupid=' + groupid
     return this.axios.get(tableDataUrl, {timeout: 5000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })
   }
-  getTableDataOnQuery (query) {
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableDataWithQuery?database=InfoManager&groupid=2&query=' + query
+  getTableDataOnQuery (groupid, query) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableDataWithQuery?database=' + databaseName + '&groupid=' + groupid + '&query=' + query
     return this.axios.get(tableDataUrl, {timeout: 5000})
       .then((Response) => {
         return JSON.parse(Response.data)

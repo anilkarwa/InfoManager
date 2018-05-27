@@ -2,8 +2,8 @@
 <div id="login">
   <v-app id="inspire">
     <v-content>
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
+      <v-container  fluid fill-height>
+        <v-layout style="background-color:  #f5b041 " align-center justify-center>
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
@@ -20,6 +20,7 @@
                   <v-text-field 
                   v-model="loginDetails.password"
                   id="password" 
+                  type="password"
                   :rules="passwordRules"
                   label="Password" required ></v-text-field>
                 </v-form>
@@ -80,6 +81,7 @@ export default {
             response = JSON.parse(response)
             console.log('Response', response[0].DatabaseName)
             localStorage.setItem('DatabaseName', response[0].DatabaseName)
+            localStorage.setItem('CompanyName', response[0].CompName)
             router.push({name: 'Menu', params: {resource: 'Test'}})
           } else {
             console.log('Invalid Username password')

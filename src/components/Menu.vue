@@ -3,7 +3,7 @@
   <v-app >
     <div>
       <v-toolbar color="pink">
-        <v-toolbar-title class="white--text">Info Manager</v-toolbar-title>
+        <v-toolbar-title class="white--text">{{CompanyName}} - Info Manager  </v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
         <v-container
@@ -17,7 +17,8 @@
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
                     <v-flex xs12> 
-                        <div class="headline">General Category</div>
+                        <div class="headline"><v-icon  x-large right dark>playlist_add_check</v-icon>  General Category</div>
+                        
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -28,7 +29,7 @@
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
                     <v-flex xs12>
-                        <div class="headline">Store Doc</div>
+                        <div class="headline"><v-icon  x-large right dark>file_copy</v-icon>  Cloud Doc</div>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -39,7 +40,7 @@
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
                     <v-flex xs12>
-                        <div class="headline">Notification</div>
+                        <div class="headline"><v-icon  x-large right dark>notification_important</v-icon>  Notification</div>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -57,8 +58,12 @@ import router from '../router'
 export default {
   data () {
     return {
-      categoryName: ''
+      categoryName: '',
+      CompanyName: ''
     }
+  },
+  beforeMount () {
+    this.CompanyName = localStorage.getItem('CompanyName')
   },
   methods: {
     menuSelection: (id) => {

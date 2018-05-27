@@ -9,12 +9,12 @@
     >
       <v-list dense>
         <template v-for="item in mainMenuList">
-          <v-list-tile :key="item.GrpID">
+          <v-list-tile :key="item.GrpID" @click="loadTable(item.GrpID)">
             <v-list-tile-action>
-              <v-icon>book</v-icon>
+              <v-icon>list</v-icon>
             </v-list-tile-action>
 
-            <v-list-tile-content>
+            <v-list-tile-content >
               <v-list-tile-title>
                 {{ item.GrpName }}
               </v-list-tile-title>
@@ -76,7 +76,7 @@
           </template> 
 
         <template slot="items" slot-scope="row">
-          <tr>
+          <tr @click="loadSelectedRowData(row.item)">
             <component  v-for="header in Object.keys(row.item)" :key="header" :is="getComponentByColumnType(header, row.item)"></component>
          </tr>
         </template>
@@ -147,73 +147,115 @@
           Create contact
         </v-card-title>
         <v-container grid-list-sm class="pa-4">
+          <v-form ref="form" v-model="valid" lazy-validation>
           <v-layout row wrap>
+              <v-flex xs4>
+                <v-select
+                  :items="headersData"
+                  v-model="ConditionColumnName1"
+                  label="Coulmn Name"
+                  single-line 
+                  autocomplete
+                  required
+                  :rules="[v => !!v || 'Please select column name']"
+                ></v-select>
+              </v-flex>
 
+              <v-flex xs4>
+            <v-select
+              :items="conditionArray"
+              v-model="SelectedConditionOnColumn1"
+              label="Condition Type"
+              single-line 
+              autocomplete
+              required
+              :rules="[v => !!v || 'Please select condition type']"
+            ></v-select>
+          </v-flex>
             <v-flex xs4>
-              <v-select
-                :items="headersData"
-                v-model="ConditionColumnName1"
-                label="Coulmn Name"
-                single-line
-              ></v-select>
-            </v-flex>
-
-             <v-flex xs4>
-          <v-select
-            :items="conditionArray"
-            v-model="SelectedConditionOnColumn1"
-            label="Condition Type"
-            single-line
-          ></v-select>
-        </v-flex>
+            <v-text-field
+              id="testing"
+              name="input-1"
+              v-model="ConditionColumnNameValue1"
+              label="Condition Value" 
+              required 
+              :rules="ConditionColumnNameValue1Rules"
+            ></v-text-field>
+          </v-flex>
+            <v-flex xs12>
+              <v-radio-group v-model="ConditionalStatement" row :mandatory="false" required>
+              <v-radio label="AND" value="and" selected></v-radio>
+              <v-radio label="OR" value="or"></v-radio>
+            </v-radio-group>
+          </v-flex>
           <v-flex xs4>
-          <v-text-field
-            id="testing"
-            name="input-1"
-            v-model="ConditionColumnNameValue1"
-            label="Condition Value"
-          ></v-text-field>
-        </v-flex>
-          <v-flex xs12>
-            <v-radio-group v-model="ConditionalStatement" row :mandatory="false">
-            <v-radio label="AND" value="and" ></v-radio>
-            <v-radio label="OR" value="or"></v-radio>
-          </v-radio-group>
-        </v-flex>
-         <v-flex xs4>
-          <v-select
-            :items="headersData"
-            v-model="ConditionColumnName2"
-            label="Column Name"
-            single-line
-          ></v-select>
-        </v-flex>
-             <v-flex xs4>
-          <v-select
-            :items="conditionArray"
-            v-model="SelectedConditionOnColumn2"
-            label="Condition Type"
-            single-line
-          ></v-select>
-        </v-flex>
-          <v-flex xs4>
-          <v-text-field
-            id="testing"
-            name="input-1"
-            v-model="ConditionColumnNameValue2"
-            label="Label Text"
-          ></v-text-field>
-        </v-flex>
-
-      </v-layout>
+            <v-select
+              :items="headersData"
+              v-model="ConditionColumnName2"
+              label="Column Name"
+              single-line 
+              autocomplete
+              required 
+              :rules="[v => !!v || 'Please select column name']"
+            ></v-select>
+          </v-flex>
+              <v-flex xs4>
+            <v-select
+              :items="conditionArray"
+              v-model="SelectedConditionOnColumn2"
+              label="Condition Type"
+              single-line 
+              autocomplete
+              required 
+              :rules="[v => !!v || 'Please select condition type']"
+            ></v-select>
+          </v-flex>
+            <v-flex xs4>
+            <v-text-field
+              id="testing"
+              name="input-1"
+              v-model="ConditionColumnNameValue2"
+              label="Label Text" 
+              required 
+              :rules="ConditionColumnNameValue2Rules"
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
+      </v-form>
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn flat color="primary" @click="settings = false">Cancel</v-btn>
-          <v-btn flat color="primary" @click="applyCondition">Save</v-btn>
+          <v-btn flat color="primary"  :disabled="!valid" @click="applyCondition">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="settings" max-width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Details</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-list two-line>
+                   <template v-for="(item, index) in editedItem">
+                     <v-list-tile :key="item.title">
+                      <v-list-tile-content >
+                         <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                         <v-list-tile-sub-title v-html="item.subtitle"></v-list-tile-sub-title>
+                      </v-list-tile-content></v-list-tile>
+                   </template>
+                </v-list>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click="setting = false">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
   </v-app>
 </div>
 </template>
@@ -228,12 +270,25 @@ export default {
     ConditionColumnNameValue2: '',
     SelectedConditionOnColumn1: '',
     SelectedConditionOnColumn2: '',
-    ConditionalStatement: '',
+    ConditionalStatement: 'and',
+    ConditionColumnNameValue1Rules: [
+      v => !!v || 'Enter some condition ',
+      v => (v && v.length >= 0) || 'Please enter some condition value'
+    ],
+    ConditionColumnNameValue2Rules: [
+      v => !!v || 'Enter some condition',
+      v => (v && v.length >= 0) || 'Please enter some condition value'
+    ],
     add: false,
+    valid: true,
     settings: false,
+    SelectedGroupId: 0,
+    FirstGroupid: 0,
     categoryName: '',
     dialog: false,
     drawer: null,
+    editedItem: [],
+    editedIndex: 0,
     mainMenuList: [],
     search: '',
     headersData: [],
@@ -246,16 +301,14 @@ export default {
       {text: 'is greater than or equal to', value: '>='},
       {text: 'is less than', value: '<'},
       {text: 'is less than or equal to', value: '<='},
-      {text: 'begin with', value: ' like \'%'},
-      {text: 'does not begin with', value: 'not like \'% '}]
+      {text: 'begin with', value: ' like \''},
+      {text: 'does not begin with', value: 'not like \''}]
   }),
   props: {
     source: String
   },
   beforeMount () {
     this.getMainMenu()
-    this.getTableHeader()
-    this.getTableData()
   },
   computed: {
   },
@@ -267,10 +320,10 @@ export default {
       if (header !== 'INFOID') {
         const valData = this.headersData.find(h => h.value === header).selected
         if (valData) {
-          const rowData = '<td v-show="true">' + data[header] + '</td>'
+          const rowData = '<td align="center" v-show="true">' + data[header] + '</td>'
           return {template: rowData}
         } else {
-          const rowData = '<td v-show="false">' + data[header] + '</td>'
+          const rowData = '<td align="center" v-show="false">' + data[header] + '</td>'
           return {template: rowData}
         }
       }
@@ -282,6 +335,9 @@ export default {
           // console.log('Elements', element.GrpName)
           this.mainMenuList.push(element)
         })
+        this.FirstGroupid = this.mainMenuList[0].GrpID
+        this.getTableHeader(this.FirstGroupid)
+        this.getTableData(this.FirstGroupid)
       })
     },
     displayTitle (name) {
@@ -290,8 +346,9 @@ export default {
       }
       return localStorage.getItem('categoryName')
     },
-    getTableHeader () {
-      axios.getTableHeader().then((data) => {
+    getTableHeader (groupid) {
+      this.headersData = []
+      axios.getTableHeader(groupid).then((data) => {
         // console.log('Table  Header Data', data)
         data.forEach(element => {
           // console.log('lets see the data', element)
@@ -304,8 +361,8 @@ export default {
       // return this.headersData.find(h => h.value === col).selected
       return true
     },
-    getTableData () {
-      axios.getTableData().then((data) => {
+    getTableData (groupid) {
+      axios.getTableData(groupid).then((data) => {
         this.desserts = data
         // console.log('TRY', data[0])
         // data.forEach(element => {
@@ -320,12 +377,42 @@ export default {
       })
     },
     applyCondition () {
-      this.settings = false
-      let queryCondition = this.ConditionColumnName1 + ' ' + this.SelectedConditionOnColumn1 + ' ' + '\'' + this.ConditionColumnNameValue1 + '\'' + ' ' + this.ConditionalStatement + ' ' + this.ConditionColumnName2 + ' ' + this.SelectedConditionOnColumn2 + ' ' + '\'' + this.ConditionColumnNameValue2 + '\''
-      console.log(queryCondition)
-      // axios.getTableDataOnQuery(queryCondition).then((data) => {
-      //   this.desserts = data
-      // })
+      if (this.$refs.form.validate()) {
+        this.settings = false
+        let queryCondition = ''
+        if ((this.SelectedConditionOnColumn1.trim() === "like '" && this.SelectedConditionOnColumn2.trim() === "like '") || (this.SelectedConditionOnColumn1.trim() === "not like '" && this.SelectedConditionOnColumn2.trim() === "not like '")) {
+          queryCondition = this.ConditionColumnName1 + ' ' + this.SelectedConditionOnColumn1 + this.ConditionColumnNameValue1 + '%\'' + ' ' + this.ConditionalStatement + ' ' + this.ConditionColumnName2 + ' ' + this.SelectedConditionOnColumn2 + this.ConditionColumnNameValue2 + '%\''
+          console.log(queryCondition)
+        } else {
+          if (this.SelectedConditionOnColumn1.trim() === "like '" || this.SelectedConditionOnColumn1.trim() === "not like '") {
+            queryCondition = this.ConditionColumnName1 + ' ' + this.SelectedConditionOnColumn1 + this.ConditionColumnNameValue1 + '%\'' + ' ' + this.ConditionalStatement + ' ' + this.ConditionColumnName2 + ' ' + this.SelectedConditionOnColumn2 + '\'' + this.ConditionColumnNameValue2 + '\''
+            console.log(queryCondition)
+          } else {
+            if (this.SelectedConditionOnColumn2.trim() === "like '" || this.SelectedConditionOnColumn2.trim() === "not like '") {
+              queryCondition = this.ConditionColumnName1 + ' ' + this.SelectedConditionOnColumn1 + '\'' + this.ConditionColumnNameValue1 + '\'' + ' ' + this.ConditionalStatement + ' ' + this.ConditionColumnName2 + ' ' + this.SelectedConditionOnColumn2 + this.ConditionColumnNameValue2 + '%\''
+              console.log(queryCondition)
+            } else {
+              queryCondition = this.ConditionColumnName1 + ' ' + this.SelectedConditionOnColumn1 + '\'' + this.ConditionColumnNameValue1 + '\'' + ' ' + this.ConditionalStatement + ' ' + this.ConditionColumnName2 + ' ' + this.SelectedConditionOnColumn2 + '\'' + this.ConditionColumnNameValue2 + '\''
+              console.log(queryCondition)
+            }
+          }
+        }
+        axios.getTableDataOnQuery(this.SelectedGroupId, queryCondition).then((data) => {
+          this.desserts = data
+          this.$refs.form.reset()
+        })
+      }
+    },
+    loadSelectedRowData (item) {
+      console.log('row id=', item)
+      this.editedIndex = this.desserts.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+    loadTable (groupid) {
+      this.SelectedGroupId = groupid
+      this.getTableHeader(groupid)
+      this.getTableData(groupid)
     }
   }
 }
