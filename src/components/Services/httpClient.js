@@ -15,7 +15,7 @@ class Axios {
     const loginUrl = url.concat(username, name, userpassword, pass)
     // console.log('final URL', finalUrl)
     return this.axios.get(loginUrl, {
-      timeout: 5000
+      timeout: 50000
     }).then((Response) => {
       console.log('Response', Response.data)
       return Response.data
@@ -24,7 +24,7 @@ class Axios {
   getMainMenu () {
     const databaseName = localStorage.getItem('DatabaseName')
     const mainMenuUrl = 'http://47.23.106.203/InfoManager/api/MainMenu?database=' + databaseName
-    return this.axios.get(mainMenuUrl, {timeout: 5000})
+    return this.axios.get(mainMenuUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })
@@ -32,7 +32,7 @@ class Axios {
   getTableHeader (groupid) {
     const databaseName = localStorage.getItem('DatabaseName')
     const tableHeaderUrl = 'http://47.23.106.203/InfoManager/api/TableHeaderData?database=' + databaseName + '&groupid=' + groupid
-    return this.axios.get(tableHeaderUrl, {timeout: 5000})
+    return this.axios.get(tableHeaderUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })
@@ -40,7 +40,7 @@ class Axios {
   getTableData (groupid) {
     const databaseName = localStorage.getItem('DatabaseName')
     const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableData?database=' + databaseName + '&groupid=' + groupid
-    return this.axios.get(tableDataUrl, {timeout: 5000})
+    return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })
@@ -48,7 +48,7 @@ class Axios {
   getTableDataOnQuery (groupid, query) {
     const databaseName = localStorage.getItem('DatabaseName')
     const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableDataWithQuery?database=' + databaseName + '&groupid=' + groupid + '&query=' + query
-    return this.axios.get(tableDataUrl, {timeout: 5000})
+    return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
       })

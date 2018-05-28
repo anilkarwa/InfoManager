@@ -4,6 +4,8 @@ import Hello from '@/components/Hello'
 import Login from '@/components/Login'
 import Menu from '@/components/Menu'
 import Home from '@/components/Home'
+import CloudDoc from '@/components/CloudDoc'
+import Notificationn from '@/components/Notification'
 
 Vue.use(Router)
 
@@ -24,6 +26,16 @@ const router = new Router({
       path: '/home',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/doc',
+      name: 'CloudDoc',
+      component: CloudDoc
+    },
+    {
+      path: '/notification',
+      name: 'Notification',
+      component: Notificationn
     },
     // {
     //   path: '/login',
