@@ -2,12 +2,13 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import Vuetify from 'vuetify'
-
 import App from './App'
 import router from './router'
+import Footer from './components/common/Footer'
 
 Vue.config.productionTip = false
 Vue.use(Vuetify)
+Vue.component('app-footer', Footer)
 
 /* eslint-disable no-new */
 new Vue({

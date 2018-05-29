@@ -204,6 +204,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <app-footer></app-footer>
   </v-app>
 </div>
 </template>

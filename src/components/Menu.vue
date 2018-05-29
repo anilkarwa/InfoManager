@@ -49,6 +49,7 @@
           </v-layout>
         </v-container>
     </div>
+    <app-footer></app-footer>
   </v-app>
 </div>
 </template>
