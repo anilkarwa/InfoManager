@@ -2,8 +2,8 @@
 <div id="app">
   <v-app id="inspire">
     <div>
-      <v-toolbar color="pink">
-        <v-toolbar-title class="white--text">My Music</v-toolbar-title>
+      <v-toolbar color="blue darken-1">
+        <v-toolbar-title class="white--text">{{CompanyName}} - Notification</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
         <v-container
@@ -12,15 +12,12 @@
           grid-list-lg
         >
           <v-layout row wrap>
-            <v-flex xs12>
+            <v-flex xs12 v-for="notify in Notifications" :key="notify">
               <v-card color="blue-grey darken-2" class="white--text">
                 <v-card-title primary-title>
-                  <div class="headline">Unlimited music now</div>
-                  <div>Listen to your favorite artists and albums whenever and wherever, online and offline.</div>
+                  <div class="headline">{{notify.NotificationTitle}} </div>
+                  <div> {{notify.NotificationText}}</div>
                 </v-card-title>
-                <v-card-actions>
-                  <v-btn flat dark>Listen now</v-btn>
-                </v-card-actions>
               </v-card>
             </v-flex>
           </v-layout>
@@ -31,7 +28,30 @@
 </div>
 </template>
 <script>
+import axios from './Services/httpClient.js'
 export default {
+  data () {
+    return {
+      CompanyName: '',
+      Notifications: []
+    }
+  },
+  props: {
+    source: String
+  },
+  beforeMount () {
+    this.CompanyName = localStorage.getItem('CompanyName')
+    this.getAllNotificationList()
+  },
+  methods: {
+    getAllNotificationList () {
+      axios.getNotificationList().then((data) => {
+        data.forEach(element => {
+          this.Notifications.push({ NotificationTitle: element.NotificationTitle, NotificationText: element.NotificationText })
+        })
+      })
+    }
+  }
 }
 </script>
 <style>

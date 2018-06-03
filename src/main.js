@@ -17,3 +17,14 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+Notification.requestPermission(function (status) {
+  console.log('Notification permission status:', status)
+})
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function () {
+    console.log('Service Worker Registered!')
+  })
+    .catch(function (err) {
+      console.log('Service Worker registration failed: ', err)
+    })
+}

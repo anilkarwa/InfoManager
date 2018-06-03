@@ -53,6 +53,29 @@ class Axios {
         return JSON.parse(Response.data)
       })
   }
+  getCloudDocCategroies () {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/DocumentCategory?database=' + databaseName
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  getCloudDocuments (categroyid) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/DocumentList?database=' + databaseName + '&categoryid=' + categroyid
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  getNotificationList () {
+    const companyId = localStorage.getItem('CompanyId')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Notification?companyid=' + companyId
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
 }
-
 export default new Axios()
