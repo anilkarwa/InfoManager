@@ -7,7 +7,7 @@
           <v-toolbar color="blue darken-1" dark >
             <v-toolbar-title>Appointment</v-toolbar-title>
             <v-spacer></v-spacer>
-
+        <router-link to="/menu"><v-icon>home</v-icon></router-link>
           </v-toolbar>
               <v-btn
                 fab
@@ -23,16 +23,18 @@
                 </v-btn>
           <v-list three-line>
             <template v-for="(item, index) in items">
-              <v-list-tile :key="index" avatar ripple @click="">
+              <v-list-tile :key="index" avatar ripple @click="OnAppointmentClick(item.EventId)">
                 <v-list-tile-content>
-                  <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                  <v-list-tile-sub-title class="text--primary">{{ item.headline }}</v-list-tile-sub-title>
+                  <v-list-tile-title><b>{{ item.headline }}</b></v-list-tile-title>
+                  <v-list-tile-sub-title class="text--primary">{{ item.title }}</v-list-tile-sub-title>
                   <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
 
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-list-tile-action-text>{{ item.action }}</v-list-tile-action-text>
-                  <v-icon color="grey lighten-1">star_border</v-icon>
+                  <v-btn icon color="primary" style="z-index:100" @click="onAppointmentClear(item.EventId)" >
+                    <v-icon>close</v-icon>
+                  </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
               <v-divider v-if="index + 1 < items.length" :key="`divider-${index}`"></v-divider>
@@ -51,7 +53,7 @@
             <v-toolbar-title>Add Appointment</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn dark flat :disabled="!valid" @click.native="dialog = false">Save</v-btn>
+              <v-btn dark flat :disabled="!valid" @click="saveNewAppointment">Save</v-btn>
             </v-toolbar-items>
           </v-toolbar>
          <v-form ref="form" v-model="valid" lazy-validation>
@@ -61,33 +63,29 @@
             <!-- Appointment Date picker  -->
            
             <v-flex xs11 sm5>
-                    <v-dialog
-                    ref="dialog"
-                    v-model="modal"
-                    :return-value.sync="date"
-                    persistent
-                    lazy
-                    full-width
-                    width="290px"
+                    <v-menu
+                      ref="menu1"
+                      :close-on-content-click="false"
+                      v-model="menu1"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
                     >
-                   <v-text-field
-                    slot="activator"
-                    v-model="dateFormatted"
-                    label="Date"
-                    hint="MM/DD/YYYY format"
-                    persistent-hint
-                    prepend-icon="event"
-                    @blur="date = parseDate(dateFormatted)"
-                    readonly
-                    required
-                    :rules="[v => !!v || 'Please select event date']"
-                    ></v-text-field>
-                    <v-date-picker v-model="date" scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
-                    </v-date-picker>
-                    </v-dialog>
+                      <v-text-field
+                        slot="activator"
+                        v-model="dateFormatted"
+                        label="Date"
+                        hint="MM/DD/YYYY format"
+                        persistent-hint
+                        prepend-icon="event"
+                        @blur="date = parseDate(dateFormatted)"
+                      ></v-text-field>
+                      <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+                    </v-menu>
                 </v-flex>
               <v-flex xs11 sm5>
                 <v-dialog
@@ -141,27 +139,83 @@
           </v-form>
         </v-card>
       </v-dialog>
+
+      <v-dialog v-model="rowdialog" scrollable persistent max-width="300px">
+        <v-card>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-list two-line>
+                   <template>
+                     <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title>EventName</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.headline"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >EventTime</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.action"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Description</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.title"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Remark1</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.subtitle"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Remark2</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.subtitle2"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Remark3</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.subtitle3"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                   </template>
+                </v-list>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+           <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="rowdialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
   </v-app>
 </div>
 </template>
 <script>
+import axios from './Services/httpClient.js'
 export default {
   data () {
     return {
-      items: [
-        { action: '15 min', headline: 'Brunch this weekend?', title: 'Ali Connors', subtitle: "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?" },
-        { action: '2 hr', headline: 'Summer BBQ', title: 'me, Scrott, Jennifer', subtitle: "Wish I could come, but I'm out of town this weekend." },
-        { action: '6 hr', headline: 'Oui oui', title: 'Sandra Adams', subtitle: 'Do you have Paris recommendations? Have you ever been?' },
-        { action: '12 hr', headline: 'Birthday gift', title: 'Trevor Hansen', subtitle: 'Have any ideas about what we should get Heidi for her birthday?' },
-        { action: '18hr', headline: 'Recipe to try', title: 'Britta Holt', subtitle: 'We should eat this: Grate, Squash, Corn, and tomatillo Tacos.' }
-      ],
+      items: [],
       dialog: false,
       date: null,
       dateFormatted: null,
       modal: false,
       time: null,
       modal2: false,
+      rowdialog: false,
+      menu1: false,
       valid: true,
+      prevent: false,
+      selectedEvent: [],
       EventName: '',
       EventDescription: '',
       Remark1: '',
@@ -173,13 +227,13 @@ export default {
     source: String
   },
   beforeMount () {
+    this.getAppointments()
   },
   computed: {
     computedDateFormatted () {
       return this.formatDate(this.date)
     }
   },
-
   watch: {
     date (val) {
       this.dateFormatted = this.formatDate(this.date)
@@ -197,6 +251,44 @@ export default {
 
       const [month, day, year] = date.split('/')
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    },
+    getAppointments () {
+      this.items = []
+      axios.getAppointmentList().then((data) => {
+        data.forEach(element => {
+          this.items.push({action: element.EventTime, headline: element.EventName, title: element.Description, subtitle: element.Remark1, subtitle2: element.Remark2, subtitle3: element.Remark3, EventId: element.EventId})
+        })
+      })
+    },
+    saveNewAppointment () {
+      const validDate = this.parseDate(this.dateFormatted)
+      let appointmentData = { EventName: this.EventName, Description: this.EventDescription, Remark1: this.Remark1, Remark2: this.Remark2, Remark3: this.Remark3, EventTime: validDate + ' ' + this.time }
+      axios.saveNewAppointment(appointmentData).then((data) => {
+        console.log(data)
+        this.getAppointments()
+      })
+      this.dialog = false
+    },
+    OnAppointmentClick (eventid) {
+      this.selectedEvent = []
+      if (!this.prevent) {
+        for (let i = 0; i < this.items.length; i++) {
+          if (this.items[i].EventId === eventid) {
+            this.selectedEvent = this.items[i]
+            console.log(JSON.stringify(this.selectedEvent))
+            console.log(this.selectedEvent.headline)
+          }
+        }
+        this.rowdialog = true
+      }
+    },
+    onAppointmentClear (eventid) {
+      this.prevent = true
+      axios.removeAppointment(eventid).then((data) => {
+        console.log(data)
+        this.prevent = false
+        this.getAppointments()
+      })
     }
   }
 }

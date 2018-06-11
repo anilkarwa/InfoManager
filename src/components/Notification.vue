@@ -5,6 +5,8 @@
       <v-toolbar color="blue darken-1">
         <v-toolbar-title class="white--text">{{CompanyName}} - Notification</v-toolbar-title>
         <v-spacer></v-spacer>
+        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
+        <router-link to="/menu"><v-icon>home</v-icon></router-link>
       </v-toolbar>
         <v-container
           fluid

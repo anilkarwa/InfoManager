@@ -44,12 +44,8 @@
           single-line
           hide-details
       ></v-text-field>
-      <v-btn icon>
-        <v-icon>event</v-icon>
-      </v-btn>
-      <v-btn icon large>
-          <v-icon>home</v-icon>
-      </v-btn>
+        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
+        <router-link to="/menu"><v-icon>home</v-icon></router-link>
     </v-toolbar>
     <v-content>
    
@@ -87,7 +83,7 @@
       fab
       bottom
       right
-      color="pink"
+      color="indigo"
       dark
       fixed
       @click.stop="settings = !settings"
@@ -99,7 +95,7 @@
       fab
       bottom
       right
-      color="pink"
+      color="indigo"
       dark
       fixed
       @click.stop="add = !add"
@@ -215,7 +211,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    <v-dialog v-model="rowdialoge" max-width="500px">
+    <v-dialog v-model="rowdialoge" scrollable="" max-width="500px">
         <v-card>
           <v-card-title>
             <span class="headline">Details</span>
@@ -400,6 +396,7 @@ export default {
       console.log(JSON.stringify(this.editedItem))
     },
     loadTable (groupid) {
+      this.drawer = !this.drawer
       this.SelectedGroupId = groupid
       this.getTableHeader(groupid)
       this.getTableData(groupid)

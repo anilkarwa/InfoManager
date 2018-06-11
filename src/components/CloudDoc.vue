@@ -41,7 +41,8 @@
         class="hidden-sm-and-down"
       ></v-text-field>
       <v-spacer></v-spacer>
-    
+        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
+        <router-link to="/menu"><v-icon>home</v-icon></router-link>
     </v-toolbar>
     <v-content>
     <v-data-table
@@ -100,6 +101,7 @@ export default {
       })
     },
     getCloudDocument (categroyid) {
+      this.drawer = !this.drawer
       this.CloudFiles = []
       axios.getCloudDocuments(categroyid).then((data) => {
         data.forEach(element => {

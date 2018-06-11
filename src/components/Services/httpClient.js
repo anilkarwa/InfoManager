@@ -77,5 +77,29 @@ class Axios {
         return Response.data
       })
   }
+  getAppointmentList () {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Appointment?database=' + databaseName
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  saveNewAppointment (data) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Appointment?database=' + databaseName
+    return this.axios.post(tableDataUrl, data, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  removeAppointment (eventId) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Appointment?database=' + databaseName + '&eventId=' + eventId
+    return this.axios.put(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
 }
 export default new Axios()
