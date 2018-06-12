@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
 import Login from '@/components/Login'
 import Menu from '@/components/Menu'
 import Home from '@/components/Home'
@@ -42,16 +41,6 @@ const router = new Router({
       path: '/appointments',
       name: 'Appointment',
       component: Appointment
-    },
-    // {
-    //   path: '/login',
-    //   name: 'Login',
-    //   component: Login
-    // },
-    {
-      path: '/hello',
-      name: 'Hello',
-      component: Hello
     },
     {
       path: '*',
