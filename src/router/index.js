@@ -6,6 +6,7 @@ import Menu from '@/components/Menu'
 import Home from '@/components/Home'
 import CloudDoc from '@/components/CloudDoc'
 import Notificationn from '@/components/Notification'
+import Appointment from '@/components/appointments'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ const router = new Router({
       path: '/notification',
       name: 'Notification',
       component: Notificationn
+    },
+    {
+      path: '/appointments',
+      name: 'Appointment',
+      component: Appointment
     },
     // {
     //   path: '/login',

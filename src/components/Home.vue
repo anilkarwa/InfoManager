@@ -25,7 +25,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar
-      color="blue darken-3"
+      color="blue darken-1"
       dark
       app
       :clipped-left="$vuetify.breakpoint.mdAndUp"
@@ -33,7 +33,7 @@
     >
       <v-toolbar-title style="width: 24%" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <span class="hidden-sm-and-down">{{ displayTitle($route.params.categoryName) }}</span>
+        <span class="hidden-sm-and-down">{{CompanyName}}</span>
       </v-toolbar-title>
       <v-text-field
         flat
@@ -44,17 +44,8 @@
           single-line
           hide-details
       ></v-text-field>
-      <v-btn icon>
-        <v-icon>notifications</v-icon>
-      </v-btn>
-      <v-btn icon large>
-        <v-avatar size="32px" tile>
-          <img
-            src="https://vuetifyjs.com/static/doc-images/logo.svg"
-            alt="Vuetify"
-          >
-        </v-avatar>
-      </v-btn>
+        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
+        <router-link to="/menu"><v-icon>home</v-icon></router-link>
     </v-toolbar>
     <v-content>
    
@@ -92,10 +83,11 @@
       fab
       bottom
       right
-      color="pink"
+      color="indigo"
       dark
       fixed
       @click.stop="settings = !settings"
+      style="margin-bottom:22px"
     >
       <v-icon>settings</v-icon>
     </v-btn>
@@ -103,25 +95,20 @@
       fab
       bottom
       right
-      color="pink"
+      color="indigo"
       dark
       fixed
       @click.stop="add = !add"
-      style="margin-right:15%"
+      style="margin-right:17%;margin-bottom:22px"
     >
       <v-icon>add</v-icon>
     </v-btn>
-    <v-dialog v-model="add" width="500px">
-      <v-card>
-        <v-card-title
-          class="grey lighten-4 py-4 title"
-        >
-          Create contact
-        </v-card-title>
-        <v-container grid-list-sm class="pa-4">
-          <v-layout row wrap>
-            <v-flex xs12>
-                <v-checkbox
+     <v-dialog v-model="add" scrollable max-width="400px">
+        <v-card>
+          <v-card-title>Enable/Disable Columns</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text style="height: 400px;">
+            <v-checkbox
                 v-for="name in headersData"
                 v-model="name.selected"
                 :label="`${name.text.toString()}`"
@@ -129,25 +116,19 @@
                 hide-details
                 :key="name.text">
             </v-checkbox>
-            </v-flex>
-          </v-layout>
-        </v-container>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat color="primary" @click="add = false">Cancel</v-btn>
-          <v-btn flat color="primary" @click="add = false">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="settings" width="800px">
-      <v-card>
-        <v-card-title
-          class="grey lighten-4 py-4 title"
-        >
-          Create contact
-        </v-card-title>
-        <v-container grid-list-sm class="pa-4">
-          <v-form ref="form" v-model="valid" lazy-validation>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn color="blue darken-1" flat @click="add = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+     <v-dialog v-model="settings" scrollable max-width="800px">
+        <v-card>
+          <v-card-title>Query Data</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text style="height: 300px;">
+            <v-form ref="form" v-model="valid" lazy-validation>
           <v-layout row wrap>
               <v-flex xs4>
                 <v-select
@@ -222,15 +203,15 @@
           </v-flex>
         </v-layout>
       </v-form>
-        </v-container>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat color="primary" @click="settings = false">Cancel</v-btn>
-          <v-btn flat color="primary"  :disabled="!valid" @click="applyCondition">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="rowdialoge" max-width="500px">
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn color="blue darken-1" flat @click="settings = false">Close</v-btn>
+            <v-btn color="blue darken-1" flat :disabled="!valid" @click="applyCondition">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    <v-dialog v-model="rowdialoge" scrollable="" max-width="500px">
         <v-card>
           <v-card-title>
             <span class="headline">Details</span>
@@ -288,6 +269,7 @@ export default {
     categoryName: '',
     dialog: false,
     drawer: null,
+    CompanyName: '',
     editedItem: [],
     editedIndex: 0,
     rowdialoge: false,
@@ -310,6 +292,7 @@ export default {
     source: String
   },
   beforeMount () {
+    this.CompanyName = localStorage.getItem('CompanyName')
     this.getMainMenu()
   },
   computed: {
@@ -413,6 +396,7 @@ export default {
       console.log(JSON.stringify(this.editedItem))
     },
     loadTable (groupid) {
+      this.drawer = !this.drawer
       this.SelectedGroupId = groupid
       this.getTableHeader(groupid)
       this.getTableData(groupid)
