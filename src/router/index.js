@@ -56,18 +56,11 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   console.log(to.name, localStorage.getItem('DatabaseName'))
   if (to.name === 'Login' && localStorage.getItem('DatabaseName')) {
-    next('/Menu')
+    return next('/Menu')
   }
   if ((to.name !== 'Login' && from.name !== 'Login') && !localStorage.getItem('DatabaseName')) {
-    next('/')
+    return next('/')
   }
-  // if (to.name === 'Login' && localStorage.getItem('Token')) {
-  //   next('/');
-  // }
-  // if ((to.name !== 'Login' && from.name !== 'Login')
-  //     && !localStorage.getItem('Token')) {
-  //   next('/login');
-  // }
   next()
 })
 export default router
