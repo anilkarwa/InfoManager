@@ -6,14 +6,10 @@ class Axios {
     this.axios.defaults.timeout = 2500
   }
   Login (name, pass) {
-    const url = 'http://47.23.106.203/InfoManager/api/AuthenticateUser?'
+    const url = process.env.API_BASE + '/api/AuthenticateUser?'
     const username = 'username='
     const userpassword = '&password='
-    // console.log('HTTP - name', name)
-    // console.log('HTTP - password', pass)
-    // console.log('HTTP - url before', name)
     const loginUrl = url.concat(username, name, userpassword, pass)
-    // console.log('final URL', finalUrl)
     return this.axios.get(loginUrl, {
       timeout: 50000
     }).then((Response) => {
@@ -23,7 +19,7 @@ class Axios {
   }
   getMainMenu () {
     const databaseName = localStorage.getItem('DatabaseName')
-    const mainMenuUrl = 'http://47.23.106.203/InfoManager/api/MainMenu?database=' + databaseName
+    const mainMenuUrl = process.env.API_BASE + '/api/MainMenu?database=' + databaseName
     return this.axios.get(mainMenuUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
@@ -31,7 +27,7 @@ class Axios {
   }
   getTableHeader (groupid) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableHeaderUrl = 'http://47.23.106.203/InfoManager/api/TableHeaderData?database=' + databaseName + '&groupid=' + groupid
+    const tableHeaderUrl = process.env.API_BASE + '/api/TableHeaderData?database=' + databaseName + '&groupid=' + groupid
     return this.axios.get(tableHeaderUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
@@ -39,7 +35,7 @@ class Axios {
   }
   getTableData (groupid) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableData?database=' + databaseName + '&groupid=' + groupid
+    const tableDataUrl = process.env.API_BASE + '/api/TableData?database=' + databaseName + '&groupid=' + groupid
     return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
@@ -47,7 +43,7 @@ class Axios {
   }
   getTableDataOnQuery (groupid, query) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/TableDataWithQuery?database=' + databaseName + '&groupid=' + groupid + '&query=' + query
+    const tableDataUrl = process.env.API_BASE + '/api/TableDataWithQuery?database=' + databaseName + '&groupid=' + groupid + '&query=' + query
     return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return JSON.parse(Response.data)
@@ -55,7 +51,7 @@ class Axios {
   }
   getCloudDocCategroies () {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/DocumentCategory?database=' + databaseName
+    const tableDataUrl = process.env.API_BASE + '/api/DocumentCategory?database=' + databaseName
     return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
@@ -63,7 +59,7 @@ class Axios {
   }
   getCloudDocuments (categroyid) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/DocumentList?database=' + databaseName + '&categoryid=' + categroyid
+    const tableDataUrl = process.env.API_BASE + '/api/DocumentList?database=' + databaseName + '&categoryid=' + categroyid
     return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
@@ -71,7 +67,7 @@ class Axios {
   }
   getNotificationList () {
     const companyId = localStorage.getItem('CompanyId')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Notification?companyid=' + companyId
+    const tableDataUrl = process.env.API_BASE + '/api/Notification?companyid=' + companyId
     return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
@@ -79,7 +75,7 @@ class Axios {
   }
   getAppointmentList () {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Appointment?database=' + databaseName
+    const tableDataUrl = process.env.API_BASE + '/api/Appointment?database=' + databaseName
     return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
@@ -87,7 +83,7 @@ class Axios {
   }
   saveNewAppointment (data) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Appointment?database=' + databaseName
+    const tableDataUrl = process.env.API_BASE + '/api/Appointment?database=' + databaseName
     return this.axios.post(tableDataUrl, data, {timeout: 50000})
       .then((Response) => {
         return Response.data
@@ -95,7 +91,7 @@ class Axios {
   }
   removeAppointment (eventId) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://47.23.106.203/InfoManager/api/Appointment?database=' + databaseName + '&eventId=' + eventId
+    const tableDataUrl = process.env.API_BASE + '/api/Appointment?database=' + databaseName + '&eventId=' + eventId
     return this.axios.put(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data

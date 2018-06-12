@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
 import Login from '@/components/Login'
 import Menu from '@/components/Menu'
 import Home from '@/components/Home'
@@ -43,16 +42,6 @@ const router = new Router({
       name: 'Appointment',
       component: Appointment
     },
-    // {
-    //   path: '/login',
-    //   name: 'Login',
-    //   component: Login
-    // },
-    {
-      path: '/hello',
-      name: 'Hello',
-      component: Hello
-    },
     {
       path: '*',
       redirect: '/home'
@@ -62,18 +51,11 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   console.log(to.name, localStorage.getItem('DatabaseName'))
   if (to.name === 'Login' && localStorage.getItem('DatabaseName')) {
-    next('/Menu')
+    return next('/Menu')
   }
   if ((to.name !== 'Login' && from.name !== 'Login') && !localStorage.getItem('DatabaseName')) {
-    next('/')
+    return next('/')
   }
-  // if (to.name === 'Login' && localStorage.getItem('Token')) {
-  //   next('/');
-  // }
-  // if ((to.name !== 'Login' && from.name !== 'Login')
-  //     && !localStorage.getItem('Token')) {
-  //   next('/login');
-  // }
   next()
 })
 export default router
