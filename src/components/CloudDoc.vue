@@ -52,7 +52,9 @@
       >
         <template slot="items" slot-scope="props">
           <td class="text-xs-left">{{ props.item.fileName }}</td>
-          <td class="text-xs-left"><a :href="`http://47.23.106.203/InfoManager/${props.item.fileLink}`" ><v-icon>cloud_download</v-icon></a></td>
+          <td class="text-xs-left">{{ props.item.fileType }}</td>
+          <td class="text-xs-left">{{ props.item.fileDescription }}</td>
+          <td class="text-xs-left"><a :href="`http://47.23.106.203/InfoManager/Uploads/${props.item.fileLink}`" ><v-icon>cloud_download</v-icon></a></td>
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
           Your search for "{{ search }}" found no results.
@@ -70,49 +72,96 @@
       <v-icon>add</v-icon>
     </v-btn>
     <v-layout row justify-center>
-      <v-dialog v-model="dialog" scrollable persistent max-width="500px">
+
+    <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
-          <v-card-title>
-            <span class="headline">New Doc</span>
-          </v-card-title>
-          <v-card-text>
+          <v-toolbar dark color="primary">
+            <v-btn icon dark @click.native="dialog = false">
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-toolbar-title>New Cloud Doc</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn dark flat :disabled="!valid" @click="saveCloudDoc">Save</v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+           <v-card-text>
             <v-container grid-list-md>
+              <v-list two-line subheader>
+            <v-subheader>Create New Category</v-subheader>
+             <v-form ref="form" v-model="valid2" lazy-validation>
+              <v-layout wrap>
+                <v-flex xs6>
+                  <v-text-field label="Category Name" v-model="NewCategory" required :rules="[v => !!v || 'Please enter new category name ']"></v-text-field>
+                </v-flex>
+                <v-flex  xs3>
+                   <v-btn color="blue darken-1" :disabled="!valid2" flat @click="createCloudCategory">Save Category</v-btn>
+                </v-flex>
+              </v-layout>
+               </v-form>
+              </v-list>
+             <v-list two-line subheader>
+            <v-subheader>Upload New File On Cloud</v-subheader> 
+             <v-form ref="form" v-model="valid" lazy-validation>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field label="File Name" required></v-text-field>
+                  <v-text-field label="File Name" v-model="fileName" required :rules="[v => !!v || 'Please enter file name']"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <v-text-field label="File Type" required></v-text-field>
+                  <v-text-field label="File Type" v-model="fileType" required :rules="[v => !!v || 'Please enter file type']"></v-text-field>
                 </v-flex>
+                <v-flex xs12>
+                <v-select
+                  :items="fileCategoryDropdownList"
+                  v-model="fileCategory"
+                  label="Select file category"
+                  item-text="title"
+                  item-value="Id"
+                  required
+                  :rules="[v => !!v || 'Please select file category']"
+                ></v-select>
+              </v-flex>
                 <v-flex xs12>
                   <v-text-field
                     name="Description"
                     label="Description"
+                    v-model="fileDescription"
                     required>
                   </v-text-field>
                 </v-flex>
                   <v-flex xs12 class="text-xs-center text-sm-center text-md-center text-lg-center">
-                  <img :src="imageUrl" height="150" v-if="imageUrl"/>
-                  <v-text-field label="Select Image" @click='pickFile' v-model='imageName' prepend-icon='attach_file'></v-text-field>
+                  <v-text-field label="Select file" @click='pickFile' v-model='imageName' prepend-icon='attach_file' required  :rules="[v => !!v || 'Please select one file']"></v-text-field>
                   <input
                     type="file"
                     style="display: none"
                     ref="image"
-                    accept="image/*"
-                    @change="onFilePicked"
+                    @change="onFilePicked"                  
                   >
                 </v-flex>
               </v-layout>
+             </v-form>
+             </v-list>
             </v-container>
             <small>*indicates required field</small>
           </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="dialog = false">Close</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="dialog = false">Save</v-btn>
-          </v-card-actions>
+          <v-snackbar
+            :timeout="timeout"
+            :top="y === 'top'"
+            :bottom="y === 'bottom'"
+            :right="x === 'right'"
+            :left="x === 'left'"
+            :multi-line="mode === 'multi-line'"
+            :vertical="mode === 'vertical'"
+            v-model="snackbar"
+          >
+          {{snackbarText}}
+        <v-btn flat color="pink" @click.native="snackbar = false">Close</v-btn>
+      </v-snackbar>
+
         </v-card>
       </v-dialog>
+
+
     </v-layout>
     <app-footer></app-footer>
   </v-app>
@@ -127,9 +176,25 @@ export default {
       drawer: null,
       search: '',
       CompanyName: '',
+      valid: true,
+      valid2: true,
+      fileName: '',
+      fileType: '',
+      fileCategory: '',
+      fileDescription: '',
+      NewCategory: '',
+      snackbar: false,
+      y: 'top',
+      x: null,
+      mode: '',
+      timeout: 6000,
+      snackbarText: '',
       DocCategories: [],
+      fileCategoryDropdownList: [],
       headers: [
         {text: 'File Name', value: 'name', sortable: false},
+        {text: 'File Type', value: 'fileType', sortable: false},
+        {text: 'File Description', value: 'description', sortable: false},
         { text: 'Download', value: 'iron', sortable: false }
       ],
       CloudFiles: [],
@@ -151,6 +216,7 @@ export default {
         data.forEach(element => {
           this.DocCategories.push({ title: element.CategoryName, Id: element.CategoryId })
         })
+        this.fileCategoryDropdownList = this.DocCategories
         this.getCloudDocument(this.DocCategories[0].Id)
       })
     },
@@ -159,7 +225,7 @@ export default {
       this.CloudFiles = []
       axios.getCloudDocuments(categroyid).then((data) => {
         data.forEach(element => {
-          this.CloudFiles.push({fileName: element.DocumentName, fileLink: element.DocumentLink})
+          this.CloudFiles.push({fileName: element.DocumentName, fileLink: element.DocumentLink, fileType: element.DocumentType, fileDescription: element.DocumentDescription})
         })
       })
     },
@@ -190,6 +256,31 @@ export default {
         this.imageFile = ''
         this.imageUrl = ''
       }
+    },
+    saveCloudDoc () {
+      var formData = new FormData()
+      formData.append('fileName', this.fileName)
+      formData.append('fileType', this.fileType)
+      formData.append('fileCategory', this.fileCategory)
+      formData.append('fileDescription', this.fileDescription)
+      formData.append('cloudDocfile', this.imageFile)
+      formData.append('cloudDocfileName', this.imageName)
+      formData.append('cloudDocfileUrl', this.imageUrl)
+      axios.saveNewCloudDoc(formData).then((data) => {
+        console.log(data)
+        this.snackbar = true
+        this.snackbarText = data
+        this.$refs.form.reset()
+        this.dialog = false
+      })
+    },
+    createCloudCategory () {
+      axios.createCloudCategory(this.NewCategory).then((data) => {
+        console.log(data)
+        this.snackbar = true
+        this.snackbarText = data
+        this.$refs.form.reset()
+      })
     }
   }
 }

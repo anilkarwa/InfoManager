@@ -14,7 +14,7 @@
           grid-list-lg
         >
           <v-layout row wrap>
-             <v-flex xs12 @click="menuSelection(1)">
+             <v-flex xs12 sm6 md4 lg4 xl4 @click="menuSelection(1)">
               <v-card color="blue-grey darken-1" class="white--text" height="60px">
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
@@ -26,7 +26,7 @@
                 </v-container>
               </v-card>
             </v-flex>
-            <v-flex xs12 @click="menuSelection(2)">
+            <v-flex xs12 sm6 md4 lg4 xl4 @click="menuSelection(2)">
               <v-card color="blue-grey darken-1" class="white--text" height="60px">
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
@@ -37,7 +37,7 @@
                 </v-container>
               </v-card>
             </v-flex>
-            <v-flex xs12 @click="menuSelection(3)">
+            <v-flex xs12 sm6 md4 lg4 xl4 @click="menuSelection(3)">
               <v-card color="blue-grey darken-1" class="white--text" height="60px">
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
@@ -48,7 +48,7 @@
                 </v-container>
               </v-card>
             </v-flex>
-           <v-flex xs12 @click="menuSelection(4)">
+           <v-flex xs12 sm6 md4 lg4 xl4 @click="menuSelection(4)">
               <v-card color="blue-grey darken-1" class="white--text" height="60px">
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">
@@ -59,7 +59,7 @@
                 </v-container>
               </v-card>
             </v-flex>
-            <v-flex xs12 @click="menuSelection(5)">
+            <v-flex xs12 sm6 md4 lg4 xl4 @click="menuSelection(5)">
               <v-card color="blue-grey darken-1" class="white--text" height="60px">
                 <v-container fluid grid-list-lg>
                   <v-layout row class="text-lg-center">

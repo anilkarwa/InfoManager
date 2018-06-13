@@ -97,5 +97,25 @@ class Axios {
         return Response.data
       })
   }
+  saveNewCloudDoc (formData) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://localhost:55848/api/SaveCloudDOc?database=' + databaseName
+    return this.axios.post(tableDataUrl, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 50000
+    }).then((Response) => {
+      return Response.data
+    })
+  }
+  createCloudCategory (categoryName) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = 'http://localhost:55848/api/CreateCloudDocCategory?database=' + databaseName + '&categoryName=' + categoryName
+    return this.axios.post(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
 }
 export default new Axios()

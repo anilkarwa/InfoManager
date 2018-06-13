@@ -14,7 +14,7 @@
           grid-list-lg
         >
           <v-layout row wrap>
-            <v-flex xs12 v-for="notify in Notifications" :key="notify.NotificationTitle">
+            <v-flex xs12 sm10 md4 lg4 xl4 v-for="notify in Notifications" :key="notify.NotificationTitle">
               <v-card color="blue-grey darken-2" class="white--text">
                 <v-card-title primary-title>
                   <div class="headline">{{notify.NotificationTitle}} </div>
@@ -36,12 +36,20 @@
       <v-icon>add</v-icon>
     </v-btn>
     <v-layout row justify-center>
-      <v-dialog v-model="dialog" scrollable persistent max-width="500px">
+    
+    <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card>
-          <v-card-title>
-            <span class="headline">New Notification</span>
-          </v-card-title>
-          <v-card-text>
+          <v-toolbar dark color="primary">
+            <v-btn icon dark @click.native="dialog = false">
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-toolbar-title>New Notification</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn dark flat @click.native="dialog = false">Save</v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+            <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
@@ -98,13 +106,12 @@
               </v-layout>
             </v-container>
           </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="dialog = false">Close</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="dialog = false">Save</v-btn>
-          </v-card-actions>
+          <v-divider></v-divider>
+        
         </v-card>
       </v-dialog>
+
+
     </v-layout>
     <app-footer></app-footer>
   </v-app>

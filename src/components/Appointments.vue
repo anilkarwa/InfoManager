@@ -2,7 +2,7 @@
 <div id="app">
  <v-app id="inspire">
     <v-layout row>
-      <v-flex xs12 lg12 >
+      <v-flex xs12 >
         <v-card>
           <v-toolbar color="blue darken-1" dark >
             <v-toolbar-title>Appointment</v-toolbar-title>
