@@ -4,7 +4,7 @@
     <v-content>
       <v-container style="background-color:  #f5b041 " fluid fill-height>
         <v-layout  align-center justify-center>
-          <v-flex xs12 sm8 md4>
+          <v-flex xs12 sm8 md4 v-if="login">
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
                 <v-toolbar-title>InfoManager Login </v-toolbar-title>
@@ -26,8 +26,58 @@
                 </v-form>
               </v-card-text>
               <v-card-actions>
+                <v-btn @click="changeScreen()" color="primary">30 days Trial</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn @click="login()" color="primary">Login</v-btn>
+              </v-card-actions>
+              <v-snackbar
+                :timeout="snackbarTimeout"
+                :color="snackbarColor"
+                :multi-line="snackbarMode === 'multi-line'"
+                :vertical="snackbarMode === 'vertical'"
+                v-model="snackbar" > {{ snackbarText }} <v-btn dark flat @click.native="snackbar = false">Close</v-btn>
+              </v-snackbar>
+            </v-card>
+          </v-flex>
+          <v-flex xs12 sm8 md4 v-else>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>To watch our free demos, Signup</v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-toolbar>
+              <v-card-text>
+                <v-form v-model="signupValid" ref="signupform">
+                  <v-text-field 
+                  v-model="signupDetails.firstName"
+                  id="firstName"
+                  :rules="firstNameRules"
+                  label="First Name" required ></v-text-field>
+                  <v-text-field 
+                  v-model="signupDetails.lastName"
+                  id="lastName" 
+                  :rules="lastNameRules"
+                  label="Last Name" required ></v-text-field>
+                  <v-text-field 
+                  v-model="signupDetails.emailId"
+                  id="emailId" 
+                  :rules="emailIdRules"
+                  label="Email" required ></v-text-field>
+                  <v-text-field 
+                  v-model="signupDetails.phoneNumber"
+                  id="Phone" 
+                  :rules="phoneNumberRules"
+                  label="Phone" required ></v-text-field>
+                  <v-text-field 
+                  v-model="signupDetails.companyName"
+                  id="companyName" 
+                  :rules="companyNameRules"
+                  label="Company" required ></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn @click="changeScreen()" color="primary">Login</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn @click="signup()" color="primary">SignUp</v-btn>
               </v-card-actions>
               <v-snackbar
                 :timeout="snackbarTimeout"
@@ -51,6 +101,15 @@ export default {
   data () {
     return {
       valid: false,
+      login: true,
+      signupValid: false,
+      signupDetails: {
+        firstName: '',
+        lastName: '',
+        emailId: '',
+        phoneNumber: '',
+        companyName: ''
+      },
       loginDetails: {
         username: '',
         password: ''
@@ -60,8 +119,28 @@ export default {
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
       passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length <= 25 || 'Password must be less than 25 characters'
+        a => !!a || 'Password is required',
+        a => a.length <= 25 || 'Password must be less than 25 characters'
+      ],
+      firstNameRules: [
+        b => !!b || 'First Name is required',
+        b => b.length <= 25 || 'First Name must be less than 25 characters'
+      ],
+      lastNameRules: [
+        c => !!c || 'Last Name is required',
+        c => c.length <= 25 || 'Last Name must be less than 25 characters'
+      ],
+      emailIdRules: [
+        d => !!d || 'E-mail is required',
+        d => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(d) || 'E-mail must be valid'
+      ],
+      phoneNumberRules: [
+        v => !!v || 'Phone number is required',
+        v => /^(0|[+91]{3})?[7-9][0-9]{9}$/.test(v) || 'Phone number must be valid'
+      ],
+      companyNameRules: [
+        e => !!e || 'Company name is required',
+        e => e.length <= 50 || 'Company name must be less than 50 characters'
       ],
       snackbar: false,
       snackbarColor: 'error',
@@ -71,6 +150,13 @@ export default {
     }
   },
   methods: {
+    changeScreen () {
+      if (this.login) {
+        this.login = false
+      } else {
+        this.login = true
+      }
+    },
     login () {
       if (this.$refs.form.validate()) {
         const name = this.loginDetails.username
@@ -108,6 +194,22 @@ export default {
       // } else {
       //   console.log('Test Description')
       // }
+    },
+    signup () {
+      if (this.$refs.signupform.validate()) {
+        const firstName = this.signupDetails.firstName
+        const lastName = this.signupDetails.lastName
+        const email = this.signupDetails.emailId
+        const phone = this.signupDetails.phoneNumber
+        const company = this.signupDetails.companyName
+        console.log('First Name', firstName)
+        console.log('Last Name', lastName)
+        console.log('Email', email)
+        console.log('Phone', phone)
+        console.log('Company', company)
+      } else {
+        this.$refs.signupform.validate()
+      }
     }
   }
 }
