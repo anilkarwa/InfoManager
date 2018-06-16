@@ -87,7 +87,7 @@
       dark
       fixed
       @click.stop="settings = !settings"
-      style="margin-bottom:22px"
+      style="margin-bottom:22px;z-index:100"
     >
       <v-icon>settings</v-icon>
     </v-btn>
@@ -99,7 +99,7 @@
       dark
       fixed
       @click.stop="add = !add"
-      style="margin-right:17%;margin-bottom:22px"
+      style="margin-right:17%;margin-bottom:22px; z-index:100"
     >
       <v-icon>add</v-icon>
     </v-btn>

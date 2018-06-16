@@ -149,5 +149,13 @@ class Axios {
         return Response.data
       })
   }
+  removeNotification (notificationId) {
+    const companyId = localStorage.getItem('CompanyId')
+    const tableDataUrl = process.env.API_BASE + '/api/Notification?companyid=' + companyId + '&notificationId=' + notificationId
+    return this.axios.put(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
 }
 export default new Axios()

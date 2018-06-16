@@ -17,7 +17,7 @@
                 dark
                 fixed
                 @click.stop="dialog = !dialog"
-                style="margin-bottom:22px"
+                style="margin-bottom:22px;z-index:100"
                 >
                 <v-icon>add</v-icon>
                 </v-btn>
@@ -79,7 +79,7 @@
                         slot="activator"
                         v-model="dateFormatted"
                         label="Date"
-                        hint="MM/DD/YYYY format"
+                        hint="DD/MM/YYYY format"
                         persistent-hint
                         prepend-icon="event"
                         @blur="date = parseDate(dateFormatted)"
@@ -129,10 +129,10 @@
                     <v-text-field v-model="Remark1" hint="Enter Remark 1" box label="Remark 1"></v-text-field>
                     </v-flex>
                     <v-flex xs12 >
-                    <v-text-field v-model="Remark2" hint="Enter Remark 1" box label="Remark 2"></v-text-field>
+                    <v-text-field v-model="Remark2" hint="Enter Remark 2" box label="Remark 2"></v-text-field>
                     </v-flex>
                     <v-flex xs12 >
-                    <v-text-field v-model="Remark3"  hint="Enter Remark 1" box label="Remark 3"></v-text-field>
+                    <v-text-field v-model="Remark3"  hint="Enter Remark 3" box label="Remark 3"></v-text-field>
                     </v-flex>
                 </v-layout>
                 </v-container>
@@ -145,7 +145,7 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <v-list two-line>
+                <v-list three-line>
                    <template>
                      <v-list-tile >
                       <v-list-tile-content >
@@ -268,6 +268,13 @@ export default {
         this.getAppointments()
       })
       this.dialog = false
+      this.EventName = ''
+      this.EventDescription = ''
+      this.Remark1 = ''
+      this.Remark2 = ''
+      this.Remark3 = ''
+      this.dateFormatted = null
+      this.time = null
     },
     OnAppointmentClick (eventid) {
       this.selectedEvent = []

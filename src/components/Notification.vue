@@ -8,22 +8,25 @@
         <router-link to="/appointments"><v-icon>event</v-icon></router-link>
         <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
       </v-toolbar>
-        <v-container
-          fluid
-          style="min-height: 0;"
-          grid-list-lg
-        >
-          <v-layout row wrap>
-            <v-flex xs12 sm10 md4 lg4 xl4 v-for="notify in Notifications" :key="notify.NotificationTitle">
-              <v-card color="blue-grey darken-2" class="white--text">
-                <v-card-title primary-title>
-                  <div class="headline">{{notify.NotificationTitle}} </div>
-                  <div> {{notify.NotificationText}}</div>
-                </v-card-title>
-              </v-card>
-            </v-flex>
-          </v-layout>
-        </v-container>
+    <v-list three-line>
+        <template v-for="(notify, index) in Notifications">
+          <v-list-tile :key="index" avatar ripple @click="openNotification(notify.NotificationId)">
+            <v-list-tile-content>
+              <v-list-tile-title><b>{{ notify.NotificationTitle }}</b></v-list-tile-title>
+              <v-list-tile-sub-title class="text--primary">{{ notify.NotificationText }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title>{{ notify.SendTo }}</v-list-tile-sub-title>
+
+            </v-list-tile-content>
+            <v-list-tile-action>
+              <v-list-tile-action-text>{{ notify.NotificationDateTime }}</v-list-tile-action-text>
+              <v-btn icon color="primary" style="z-index:100" @click="deleteNotification(notify.NotificationId)" >
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+          <v-divider v-if="index + 1 < Notifications.length" :key="`divider-${index}`"></v-divider>
+        </template>
+      </v-list>
     </div>
     <v-btn
       fab
@@ -33,8 +36,20 @@
       dark
       fixed
       @click.stop="dialog = !dialog"
-      style="margin-bottom:22px">
+      style="margin-bottom:22px; z-index:100">
       <v-icon>add</v-icon>
+    </v-btn>
+    <v-btn
+      fab
+      bottom
+      right
+      color="indigo"
+      dark
+      fixed
+      @click="gotoContacts"
+      style="margin-right:17%;margin-bottom:22px"
+    >
+      <v-icon>perm_contact_calendar</v-icon>
     </v-btn>
     <v-layout row justify-center>
     
@@ -77,26 +92,29 @@
                   ></v-select>
                 </v-flex>
                 <v-flex xs12 sm10 md6 lg6>
-                  <v-menu
-                    :close-on-content-click="false"
-                    v-model="menu"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    max-width="290px"
-                    min-width="290px">
-                    <v-text-field
-                      slot="activator"
-                      v-model="date"
-                      label="Date"
-                      persistent-hint
-                      prepend-icon="event"
-                      readonly>
-                    </v-text-field>
-                    <v-date-picker v-model="date" no-title @input="menu = false"></v-date-picker>
-                  </v-menu>
+                   <v-menu
+                      ref="menu1"
+                      :close-on-content-click="false"
+                      v-model="menu1"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <v-text-field
+                        slot="activator"
+                        v-model="dateFormatted"
+                        label="Date"
+                        hint="DD/MM/YYYY format"
+                        persistent-hint
+                        prepend-icon="event"
+                        @blur="date = parseDate(dateFormatted)"
+                      ></v-text-field>
+                      <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+                    </v-menu>
                 </v-flex>
                 <v-flex xs12 sm10 md6 lg6>
                   <v-menu
@@ -159,7 +177,49 @@
         
         </v-card>
       </v-dialog>
+     <v-dialog v-model="dialog2" scrollable max-width="300px">
+        <v-card>
+          <v-card-text style="height: 300px;">
+           <v-container grid-list-md>
+              <v-layout wrap>
+                <v-list three-line>
+                   <template>
+                     <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title>Title</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.NotificationTitle"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Text</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.NotificationText"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Date & Time</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedEvent.NotificationDateTime"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
+                      <v-list-tile >
+                      <v-list-tile-content >
+                        <v-list-tile-title >Send To</v-list-tile-title>
+                        <v-list-tile-sub-title v-html="selectedContactName"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                     </v-list-tile>
 
+                   </template>
+                </v-list>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn color="blue darken-1" flat @click.native="dialog2 = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
     </v-layout>
     <app-footer></app-footer>
@@ -168,13 +228,17 @@
 </template>
 <script>
 import axios from './Services/httpClient.js'
+import router from '../router'
 export default {
   data () {
     return {
       CompanyName: '',
       Notifications: [],
       dialog: false,
+      dialog2: false,
+      menu1: false,
       date: null,
+      dateFormatted: null,
       menu: false,
       menu2: false,
       time: null,
@@ -186,7 +250,10 @@ export default {
       contactName: '',
       contactPhone: '',
       loading: false,
+      prevent: false,
       snackbar: false,
+      selectedContactName: '',
+      selectedEvent: [],
       y: 'top',
       x: null,
       mode: '',
@@ -210,19 +277,40 @@ export default {
   mounted () {
     this.getContactsList()
   },
+  computed: {
+    computedDateFormatted () {
+      return this.formatDate(this.date)
+    }
+  },
+  watch: {
+    date (val) {
+      this.dateFormatted = this.formatDate(this.date)
+    }
+  },
   methods: {
+    formatDate (date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${day}/${month}/${year}`
+    },
+    parseDate (date) {
+      if (!date) return null
+
+      const [month, day, year] = date.split('/')
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    },
     getAllNotificationList () {
       this.Notifications = []
       axios.getNotificationList().then((data) => {
         data.forEach(element => {
-          this.Notifications.push({ NotificationTitle: element.NotificationTitle, NotificationText: element.NotificationText })
+          this.Notifications.push({ NotificationId: element.NotificationId, NotificationTitle: element.NotificationTitle, NotificationText: element.NotificationText, NotificationDateTime: element.NotifyDateTime, SendTo: element.SendTo })
         })
       })
     },
     saveNewNotification () {
-      let dateTime = this.date + ' ' + this.time
-      console.log(dateTime)
-      axios.saveNewNotification(this.notificationName, this.notificationDescription, dateTime, this.sentTo).then((data) => {
+      const validDate = this.parseDate(this.dateFormatted)
+      axios.saveNewNotification(this.notificationName, this.notificationDescription, validDate + ' ' + this.time, this.sentTo).then((data) => {
         this.snackbar = true
         this.snackbarText = data
         this.dialog = false
@@ -252,6 +340,25 @@ export default {
         this.contactPhone = ''
         this.getContactsList()
       })
+    },
+    openNotification (notifyid) {
+      if (!this.prevent) {
+        this.selectedEvent = this.Notifications.find(e => e.NotificationId === notifyid)
+        this.selectedContactName = this.contactsList.find(e => e.phone === this.selectedEvent.SendTo).name
+        this.dialog2 = true
+      }
+    },
+    deleteNotification (notifyid) {
+      this.prevent = true
+      axios.removeNotification(notifyid).then((data) => {
+        this.snackbar = true
+        this.snackbarText = data
+        this.prevent = false
+        this.getAllNotificationList()
+      })
+    },
+    gotoContacts () {
+      router.push({name: 'Contacts'})
     }
   }
 }

@@ -6,6 +6,7 @@ import Home from '@/components/Home'
 import CloudDoc from '@/components/CloudDoc'
 import Notificationn from '@/components/Notification'
 import Appointment from '@/components/appointments'
+import Contacts from '@/components/Contacts'
 
 Vue.use(Router)
 
@@ -41,6 +42,11 @@ const router = new Router({
       path: '/appointments',
       name: 'Appointment',
       component: Appointment
+    },
+    {
+      path: '/contacts',
+      name: 'Contacts',
+      component: Contacts
     },
     {
       path: '*',
