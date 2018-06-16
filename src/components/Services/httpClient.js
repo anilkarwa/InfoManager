@@ -99,7 +99,7 @@ class Axios {
   }
   saveNewCloudDoc (formData) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://localhost:55848/api/SaveCloudDOc?database=' + databaseName
+    const tableDataUrl = process.env.API_BASE + '/api/SaveCloudDOc?database=' + databaseName
     return this.axios.post(tableDataUrl, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -111,8 +111,40 @@ class Axios {
   }
   createCloudCategory (categoryName) {
     const databaseName = localStorage.getItem('DatabaseName')
-    const tableDataUrl = 'http://localhost:55848/api/CreateCloudDocCategory?database=' + databaseName + '&categoryName=' + categoryName
+    const tableDataUrl = process.env.API_BASE + '/api/CreateCloudDocCategory?database=' + databaseName + '&categoryName=' + categoryName
     return this.axios.post(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  saveNewNotification (notificationName, notificationText, notificationDateTime, sendTo) {
+    const companyId = localStorage.getItem('CompanyId')
+    const tableDataUrl = process.env.API_BASE + '/api/Notification?companyid=' + companyId + '&notificationType=SMS&notificationTitle=' + notificationName + '&notificationText=' + notificationText + '&notificationDateTime=' + notificationDateTime + '&sendTo=' + sendTo
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  getContactList () {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = process.env.API_BASE + '/api/Contacts?database=' + databaseName
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  saveNewContact (contactName, contactPhone) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = process.env.API_BASE + '/api/Contacts?database=' + databaseName + '&contactName=' + contactName + '&contactPhone=91' + contactPhone
+    return this.axios.post(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  saveSMSGatewayDetails (username, password, senderid) {
+    const companyId = localStorage.getItem('CompanyId')
+    const tableDataUrl = process.env.API_BASE + '/api/SMSGateway?username=' + username + '&password=' + password + '&senderid=' + senderid + '&companyid=' + companyId
+    return this.axios.get(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
       })

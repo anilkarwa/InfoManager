@@ -6,7 +6,7 @@
         <v-toolbar-title class="white--text">{{CompanyName}} - Notification</v-toolbar-title>
         <v-spacer></v-spacer>
         <router-link to="/appointments"><v-icon>event</v-icon></router-link>
-        <router-link to="/menu"><v-icon>home</v-icon></router-link>
+        <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
       </v-toolbar>
         <v-container
           fluid
@@ -29,10 +29,11 @@
       fab
       bottom
       right
-      color="pink"
+      color="indigo"
       dark
       fixed
-      @click.stop="dialog = !dialog">
+      @click.stop="dialog = !dialog"
+      style="margin-bottom:22px">
       <v-icon>add</v-icon>
     </v-btn>
     <v-layout row justify-center>
@@ -46,19 +47,36 @@
             <v-toolbar-title>New Notification</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn dark flat @click.native="dialog = false">Save</v-btn>
+              <v-btn dark flat :disabled="!valid" @click="saveNewNotification">Save</v-btn>
             </v-toolbar-items>
           </v-toolbar>
             <v-card-text>
             <v-container grid-list-md>
+           <v-list two-line subheader>
+            <v-subheader>Create New Notification</v-subheader>
+             <v-form ref="form" v-model="valid2" lazy-validation>
               <v-layout wrap>
-                <v-flex xs12>
-                  <v-text-field label="Title" required></v-text-field>
+                <v-flex xs12 sm10 md6 lg6>
+                  <v-text-field label="Title" v-model="notificationName" :rules="[v => !!v || 'Please enter notification title']" required></v-text-field>
                 </v-flex>
-                <v-flex xs12>
-                  <v-text-field label="Message" required></v-text-field>
+                <v-flex xs12 sm10 md6 lg6>
+                  <v-text-field label="Message" v-model="notificationDescription" :rules="[v => !!v || 'Please enter notification message']" required></v-text-field>
                 </v-flex>
-                <v-flex xs12>
+                <v-flex xs12 sm10 md6 lg6>
+                  <v-select
+                    :items="contactsList"
+                    v-model="sentTo"
+                    item-text="name"
+                    item-value="phone"
+                    label="Search Contact"
+                    autocomplete
+                    cache-items
+                    :loading="loading"
+                    :rules="[() => sentTo.length > 0 || 'You must choose at least number']"
+                    required
+                  ></v-select>
+                </v-flex>
+                <v-flex xs12 sm10 md6 lg6>
                   <v-menu
                     :close-on-content-click="false"
                     v-model="menu"
@@ -80,7 +98,7 @@
                     <v-date-picker v-model="date" no-title @input="menu = false"></v-date-picker>
                   </v-menu>
                 </v-flex>
-                <v-flex xs12>
+                <v-flex xs12 sm10 md6 lg6>
                   <v-menu
                     ref="menu"
                     :close-on-content-click="false"
@@ -104,7 +122,38 @@
                   </v-menu>
                 </v-flex>
               </v-layout>
+             </v-form>
+           </v-list>
+           <v-list two-line subheader>
+            <v-subheader>Create New Contact</v-subheader>
+             <v-form ref="form" v-model="valid2" lazy-validation>
+               <v-layout wrap>
+                <v-flex xs12 sm10 md6 lg6>
+                  <v-text-field label="Name" v-model="contactName" :rules="[v => !!v || 'Please enter name']"  required></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm10 md6 lg6>
+                  <v-text-field label="Phone Number" v-model="contactPhone" :rules="phoneRules" :counter="10" required></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm10 md6 lg6>
+                  <v-btn color="blue darken-1" :disabled="!valid2" flat @click="saveNewContact">Save Contact</v-btn>
+                </v-flex>
+               </v-layout>
+             </v-form>
+           </v-list>
             </v-container>
+            <v-snackbar
+            :timeout="timeout"
+            :top="y === 'top'"
+            :bottom="y === 'bottom'"
+            :right="x === 'right'"
+            :left="x === 'left'"
+            :multi-line="mode === 'multi-line'"
+            :vertical="mode === 'vertical'"
+            v-model="snackbar"
+          >
+          {{snackbarText}}
+        <v-btn flat color="pink" @click.native="snackbar = false">Close</v-btn>
+      </v-snackbar>
           </v-card-text>
           <v-divider></v-divider>
         
@@ -128,7 +177,27 @@ export default {
       date: null,
       menu: false,
       menu2: false,
-      time: null
+      time: null,
+      valid: true,
+      notificationName: '',
+      notificationDescription: '',
+      sentTo: '',
+      contactsList: [],
+      contactName: '',
+      contactPhone: '',
+      loading: false,
+      snackbar: false,
+      y: 'top',
+      x: null,
+      mode: '',
+      timeout: 6000,
+      snackbarText: '',
+      phoneRules: [
+        v => !!v || 'Number is required',
+        v => v.length >= 10 || 'Number must be equal to 10 characters',
+        v => v.length <= 10 || 'Number must be equal to 10 characters'
+      ],
+      valid2: true
     }
   },
   props: {
@@ -138,12 +207,50 @@ export default {
     this.CompanyName = localStorage.getItem('CompanyName')
     this.getAllNotificationList()
   },
+  mounted () {
+    this.getContactsList()
+  },
   methods: {
     getAllNotificationList () {
+      this.Notifications = []
       axios.getNotificationList().then((data) => {
         data.forEach(element => {
           this.Notifications.push({ NotificationTitle: element.NotificationTitle, NotificationText: element.NotificationText })
         })
+      })
+    },
+    saveNewNotification () {
+      let dateTime = this.date + ' ' + this.time
+      console.log(dateTime)
+      axios.saveNewNotification(this.notificationName, this.notificationDescription, dateTime, this.sentTo).then((data) => {
+        this.snackbar = true
+        this.snackbarText = data
+        this.dialog = false
+        this.notificationName = ''
+        this.notificationDescription = ''
+        this.sentTo = ''
+        this.date = null
+        this.time = null
+        this.getAllNotificationList()
+      })
+    },
+    getContactsList () {
+      this.contactsList = []
+      this.loading = true
+      axios.getContactList().then((data) => {
+        data.forEach(element => {
+          this.contactsList.push({ Id: element.ContactId, name: element.Name, phone: element.Phone })
+        })
+        this.loading = false
+      })
+    },
+    saveNewContact () {
+      axios.saveNewContact(this.contactName, this.contactPhone).then((data) => {
+        this.snackbar = true
+        this.snackbarText = data
+        this.contactName = ''
+        this.contactPhone = ''
+        this.getContactsList()
       })
     }
   }

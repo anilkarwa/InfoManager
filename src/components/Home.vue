@@ -45,7 +45,7 @@
           hide-details
       ></v-text-field>
         <router-link to="/appointments"><v-icon>event</v-icon></router-link>
-        <router-link to="/menu"><v-icon>home</v-icon></router-link>
+        <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
     </v-toolbar>
     <v-content>
    
@@ -53,7 +53,8 @@
       <v-data-table
         :headers="headersData"
         :items="desserts"
-        :search="search">
+        :search="search"
+        :loading="tableLoading">
 
          <template  slot="headers" slot-scope="row">
             <tr>
@@ -75,8 +76,7 @@
           Your search for "{{ search }}" found no results.
         </v-alert>
       </v-data-table>
- 
-        
+     <v-progress-circular :size="50" indeterminate color="primary"></v-progress-circular>
      
     </v-content>
     <v-btn
@@ -278,6 +278,7 @@ export default {
     headersData: [],
     desserts: [],
     dynamicTD: [],
+    tableLoading: false,
     conditionArray: [
       {text: 'equals', value: '='},
       {text: 'does not equal', value: '!='},
@@ -347,18 +348,10 @@ export default {
       return true
     },
     getTableData (groupid) {
+      this.tableLoading = true
       axios.getTableData(groupid).then((data) => {
         this.desserts = data
-        // console.log('TRY', data[0])
-        // data.forEach(element => {
-        //   // this.headers.forEach(element2 => {
-        //   //   console.log('KEY', element2.value)
-        //   //   let tempArray = {};
-        //   //   tempArray.push(element2.value)
-        //   // })
-        //   console.log('Value', element)
-        //   this.desserts.push(element)
-        // })
+        this.tableLoading = false
       })
     },
     applyCondition () {
@@ -405,5 +398,12 @@ export default {
 }
 </script>
 <style>
+.progress-circular{
+  position: relative;
+  z-index: 100;
+  top: -100px;
+  left: 200px;
 
+}
+  
 </style>

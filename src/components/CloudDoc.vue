@@ -42,13 +42,14 @@
       ></v-text-field>
       <v-spacer></v-spacer>
         <router-link to="/appointments"><v-icon>event</v-icon></router-link>
-        <router-link to="/menu"><v-icon>home</v-icon></router-link>
+        <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
     </v-toolbar>
     <v-content>
     <v-data-table
         :headers="headers"
         :items="CloudFiles"
         :search="search"
+        :loading="tableLoading"
       >
         <template slot="items" slot-scope="props">
           <td class="text-xs-left">{{ props.item.fileName }}</td>
@@ -65,10 +66,11 @@
       fab
       bottom
       right
-      color="pink"
+      color="indigo"
       dark
       fixed
-      @click.stop="dialog = !dialog">
+      @click.stop="dialog = !dialog"
+      style="margin-bottom:22px">
       <v-icon>add</v-icon>
     </v-btn>
     <v-layout row justify-center>
@@ -144,6 +146,8 @@
             </v-container>
             <small>*indicates required field</small>
           </v-card-text>
+        </v-card>
+      </v-dialog>
           <v-snackbar
             :timeout="timeout"
             :top="y === 'top'"
@@ -157,9 +161,6 @@
           {{snackbarText}}
         <v-btn flat color="pink" @click.native="snackbar = false">Close</v-btn>
       </v-snackbar>
-
-        </v-card>
-      </v-dialog>
 
 
     </v-layout>
@@ -183,6 +184,7 @@ export default {
       fileCategory: '',
       fileDescription: '',
       NewCategory: '',
+      tableLoading: false,
       snackbar: false,
       y: 'top',
       x: null,
@@ -212,6 +214,7 @@ export default {
   },
   methods: {
     getDocCategories () {
+      this.DocCategories = []
       axios.getCloudDocCategroies().then((data) => {
         data.forEach(element => {
           this.DocCategories.push({ title: element.CategoryName, Id: element.CategoryId })
@@ -221,12 +224,15 @@ export default {
       })
     },
     getCloudDocument (categroyid) {
+      this.tableLoading = true
+      this.CloudFiles = []
       this.drawer = !this.drawer
       this.CloudFiles = []
       axios.getCloudDocuments(categroyid).then((data) => {
         data.forEach(element => {
           this.CloudFiles.push({fileName: element.DocumentName, fileLink: element.DocumentLink, fileType: element.DocumentType, fileDescription: element.DocumentDescription})
         })
+        this.tableLoading = false
       })
     },
     /**
@@ -270,7 +276,11 @@ export default {
         console.log(data)
         this.snackbar = true
         this.snackbarText = data
-        this.$refs.form.reset()
+        this.fileName = ''
+        this.fileType = ''
+        this.fileCategory = ''
+        this.fileDescription = ''
+        this.imageName = ''
         this.dialog = false
       })
     },
@@ -280,6 +290,7 @@ export default {
         this.snackbar = true
         this.snackbarText = data
         this.$refs.form.reset()
+        this.getDocCategories()
       })
     }
   }
