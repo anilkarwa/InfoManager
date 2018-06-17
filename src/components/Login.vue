@@ -28,7 +28,7 @@
               <v-card-actions>
                 <v-btn @click="changeScreen()" color="primary">30 days Trial</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="login()" color="primary">Login</v-btn>
+                <v-btn @click="loginUser()" color="primary">Login</v-btn>
               </v-card-actions>
               <v-snackbar
                 :timeout="snackbarTimeout"
@@ -157,7 +157,7 @@ export default {
         this.login = true
       }
     },
-    login () {
+    loginUser () {
       if (this.$refs.form.validate()) {
         const name = this.loginDetails.username
         const password = this.loginDetails.password
