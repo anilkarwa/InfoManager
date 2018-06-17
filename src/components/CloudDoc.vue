@@ -45,6 +45,7 @@
         <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
     </v-toolbar>
     <v-content>
+    <v-progress-circular :size="50" indeterminate color="primary" v-if="loading"></v-progress-circular>   
     <v-data-table
         :headers="headers"
         :items="CloudFiles"
@@ -184,6 +185,7 @@ export default {
       fileCategory: '',
       fileDescription: '',
       NewCategory: '',
+      loading: false,
       tableLoading: false,
       snackbar: false,
       y: 'top',
@@ -224,6 +226,7 @@ export default {
       })
     },
     getCloudDocument (categroyid) {
+      this.loading = true
       this.tableLoading = true
       this.CloudFiles = []
       this.drawer = !this.drawer
@@ -232,6 +235,7 @@ export default {
         data.forEach(element => {
           this.CloudFiles.push({fileName: element.DocumentName, fileLink: element.DocumentLink, fileType: element.DocumentType, fileDescription: element.DocumentDescription})
         })
+        this.loading = false
         this.tableLoading = false
       })
     },
@@ -297,5 +301,11 @@ export default {
 }
 </script>
 <style>
+.progress-circular{
+  position: absolute;
+  z-index: 10;
+  top: 100px;
+  left: 200px;
 
+}
 </style>

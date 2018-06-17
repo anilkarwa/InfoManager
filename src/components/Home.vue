@@ -49,7 +49,7 @@
     </v-toolbar>
     <v-content>
    
-         
+      <v-progress-circular :size="50" indeterminate color="primary" v-if="loading"></v-progress-circular>   
       <v-data-table
         :headers="headersData"
         :items="desserts"
@@ -76,7 +76,7 @@
           Your search for "{{ search }}" found no results.
         </v-alert>
       </v-data-table>
-     <v-progress-circular :size="50" indeterminate color="primary"></v-progress-circular>
+  
      
     </v-content>
     <v-btn
@@ -275,6 +275,7 @@ export default {
     rowdialoge: false,
     mainMenuList: [],
     search: '',
+    loading: false,
     headersData: [],
     desserts: [],
     dynamicTD: [],
@@ -333,6 +334,7 @@ export default {
       return localStorage.getItem('categoryName')
     },
     getTableHeader (groupid) {
+      this.loading = true
       this.headersData = []
       axios.getTableHeader(groupid).then((data) => {
         // console.log('Table  Header Data', data)
@@ -352,6 +354,7 @@ export default {
       axios.getTableData(groupid).then((data) => {
         this.desserts = data
         this.tableLoading = false
+        this.loading = false
       })
     },
     applyCondition () {
@@ -399,9 +402,9 @@ export default {
 </script>
 <style>
 .progress-circular{
-  position: relative;
-  z-index: 100;
-  top: -100px;
+  position: absolute;
+  z-index: 10;
+  top: 100px;
   left: 200px;
 
 }

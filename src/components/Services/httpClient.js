@@ -89,6 +89,14 @@ class Axios {
         return Response.data
       })
   }
+  searchAppointment (term) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const tableDataUrl = process.env.API_BASE + '/api/Appointment?database=' + databaseName + '&term=' + term
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
   removeAppointment (eventId) {
     const databaseName = localStorage.getItem('DatabaseName')
     const tableDataUrl = process.env.API_BASE + '/api/Appointment?database=' + databaseName + '&eventId=' + eventId
@@ -153,6 +161,28 @@ class Axios {
     const companyId = localStorage.getItem('CompanyId')
     const tableDataUrl = process.env.API_BASE + '/api/Notification?companyid=' + companyId + '&notificationId=' + notificationId
     return this.axios.put(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  searchNotification (term) {
+    const companyId = localStorage.getItem('CompanyId')
+    const tableDataUrl = process.env.API_BASE + '/api/Notification?companyid=' + companyId + '&term=' + term
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  demoRequestMail (fullName, email, phone, companyName) {
+    const tableDataUrl = process.env.API_BASE + '/api/TryDemo?fullName=' + fullName + '&email=' + email + '&phone=' + phone + '&company=' + companyName
+    return this.axios.get(tableDataUrl, {timeout: 50000})
+      .then((Response) => {
+        return Response.data
+      })
+  }
+  rowTotalCount (databaseName) {
+    const tableDataUrl = process.env.API_BASE + '/api/TotalRecordInserted?database=' + databaseName
+    return this.axios.post(tableDataUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
       })

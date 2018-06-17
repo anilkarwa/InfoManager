@@ -2,13 +2,30 @@
 <div id="app">
   <v-app id="inspire">
     <div>
-      <v-toolbar color="blue darken-1">
-        <v-toolbar-title class="white--text">{{CompanyName}} - Notification</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
-        <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
-      </v-toolbar>
-    <v-list three-line>
+        <v-toolbar
+            color="blue darken-1"
+            dark
+            app
+            :clipped-left="$vuetify.breakpoint.mdAndUp"
+            fixed
+          >
+            <v-toolbar-title style="width: 24%" class="ml-0 pl-3">
+              <span class="hidden-sm-and-down">Notifications</span>
+            </v-toolbar-title>
+            <v-text-field
+              flat
+              solo-inverted
+              prepend-icon="search"
+              label="Search"
+              v-model="search"
+              v-on:input="searchNotification"              
+              single-line
+              hide-details
+            ></v-text-field>
+            <span> &nbsp;Total({{totalData}})</span>
+              <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
+          </v-toolbar>
+      <v-list three-line style="margin-top:60px">
         <template v-for="(notify, index) in Notifications">
           <v-list-tile :key="index" avatar ripple @click="openNotification(notify.NotificationId)">
             <v-list-tile-content>
@@ -19,7 +36,7 @@
             </v-list-tile-content>
             <v-list-tile-action>
               <v-list-tile-action-text>{{ notify.NotificationDateTime }}</v-list-tile-action-text>
-              <v-btn icon color="primary" style="z-index:100" @click="deleteNotification(notify.NotificationId)" >
+              <v-btn icon color="primary"  @click="dialog3 = true; prevent = true; selectedNotification = notify.NotificationId" >
                 <v-icon>close</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -220,7 +237,17 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
+    <v-dialog v-model="dialog3" max-width="290">
+        <v-card>
+          <v-card-title class="headline">Delete Appointment?</v-card-title>
+          <v-card-text>Are you sure, you want to delete this appointment!</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" flat="flat" @click.native="dialog3 = false; prevent= false">No,Cancel</v-btn>
+            <v-btn color="red darken-1" flat="flat" @click="deleteNotification(selectedNotification)">Yes,Delete</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-layout>
     <app-footer></app-footer>
   </v-app>
@@ -236,6 +263,9 @@ export default {
       Notifications: [],
       dialog: false,
       dialog2: false,
+      dialog3: false,
+      search: '',
+      totalData: 0,
       menu1: false,
       date: null,
       dateFormatted: null,
@@ -253,6 +283,7 @@ export default {
       prevent: false,
       snackbar: false,
       selectedContactName: '',
+      selectedNotification: '',
       selectedEvent: [],
       y: 'top',
       x: null,
@@ -297,7 +328,7 @@ export default {
     parseDate (date) {
       if (!date) return null
 
-      const [month, day, year] = date.split('/')
+      const [day, month, year] = date.split('/')
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     getAllNotificationList () {
@@ -306,6 +337,7 @@ export default {
         data.forEach(element => {
           this.Notifications.push({ NotificationId: element.NotificationId, NotificationTitle: element.NotificationTitle, NotificationText: element.NotificationText, NotificationDateTime: element.NotifyDateTime, SendTo: element.SendTo })
         })
+        this.totalData = this.Notifications.length
       })
     },
     saveNewNotification () {
@@ -354,11 +386,21 @@ export default {
         this.snackbar = true
         this.snackbarText = data
         this.prevent = false
+        this.dialog3 = false
         this.getAllNotificationList()
       })
     },
     gotoContacts () {
       router.push({name: 'Contacts'})
+    },
+    searchNotification () {
+      axios.searchNotification(this.search).then((data) => {
+        this.Notifications = []
+        data.forEach(element => {
+          this.Notifications.push({ NotificationId: element.NotificationId, NotificationTitle: element.NotificationTitle, NotificationText: element.NotificationText, NotificationDateTime: element.NotifyDateTime, SendTo: element.SendTo })
+        })
+        this.totalData = this.Notifications.length
+      })
     }
   }
 }

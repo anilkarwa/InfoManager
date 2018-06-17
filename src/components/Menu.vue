@@ -194,6 +194,13 @@ export default {
   },
   methods: {
     menuSelection: (id) => {
+      let object = JSON.parse(localStorage.getItem('loginDate'))
+      let sessionDate = object.timestamp
+      let todayDate = new Date().toLocaleDateString('en-GB')
+      if (sessionDate > todayDate) {
+        this.categoryName = 'Login'
+        router.push({name: 'Login', params: {categoryName: this.categoryName}})
+      }
       if (id === 1) {
         this.categoryName = 'General Category'
         router.push({name: 'Home', params: {categoryName: this.categoryName}})

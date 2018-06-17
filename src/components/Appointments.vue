@@ -4,10 +4,29 @@
     <v-layout row>
       <v-flex xs12 >
         <v-card>
-          <v-toolbar color="blue darken-1" dark >
-            <v-toolbar-title>Appointment</v-toolbar-title>
-            <v-spacer></v-spacer>
-        <router-link to="/menu"><v-icon>home</v-icon></router-link>
+          <v-toolbar
+            color="blue darken-1"
+            dark
+            app
+            :clipped-left="$vuetify.breakpoint.mdAndUp"
+            fixed
+            >
+            <v-toolbar-title style="width: 24%" class="ml-0 pl-3">
+             <span class="hidden-sm-and-down">Appointments</span>
+
+            </v-toolbar-title>
+            <v-text-field
+              flat
+              solo-inverted
+              prepend-icon="search"
+              label="Search"
+              v-model="search"
+              v-on:input="searchAppointment"
+              single-line
+              hide-details
+            ></v-text-field>
+             <span> &nbsp;Total({{totalData}})</span>
+              <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
           </v-toolbar>
               <v-btn
                 fab
@@ -21,7 +40,7 @@
                 >
                 <v-icon>add</v-icon>
                 </v-btn>
-          <v-list three-line>
+          <v-list three-line style="margin-top:60px">
             <template v-for="(item, index) in items">
               <v-list-tile :key="index" avatar ripple @click="OnAppointmentClick(item.EventId)">
                 <v-list-tile-content>
@@ -32,7 +51,7 @@
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-list-tile-action-text>{{ item.action }}</v-list-tile-action-text>
-                  <v-btn icon color="primary" style="z-index:100" @click="onAppointmentClear(item.EventId)" >
+                  <v-btn icon color="primary"  @click="dialog2 = true; prevent = true; selectedAppointment = item.EventId" >
                     <v-icon>close</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -195,7 +214,17 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
+      <v-dialog v-model="dialog2" max-width="290">
+        <v-card>
+          <v-card-title class="headline">Delete Appointment?</v-card-title>
+          <v-card-text>Are you sure, you want to delete this appointment!</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" flat="flat" @click.native="dialog2 = false; prevent = false">No,Cancel</v-btn>
+            <v-btn color="red darken-1" flat="flat" @click="onAppointmentClear(selectedAppointment)">Yes,Delete</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
   </v-app>
 </div>
 </template>
@@ -206,6 +235,7 @@ export default {
     return {
       items: [],
       dialog: false,
+      dialog2: false,
       date: null,
       dateFormatted: null,
       modal: false,
@@ -213,6 +243,8 @@ export default {
       modal2: false,
       rowdialog: false,
       menu1: false,
+      search: '',
+      selectedAppointment: '',
       valid: true,
       prevent: false,
       selectedEvent: [],
@@ -220,7 +252,8 @@ export default {
       EventDescription: '',
       Remark1: '',
       Remark2: '',
-      Remark3: ''
+      Remark3: '',
+      totalData: 0
     }
   },
   props: {
@@ -249,7 +282,7 @@ export default {
     parseDate (date) {
       if (!date) return null
 
-      const [month, day, year] = date.split('/')
+      const [day, month, year] = date.split('/')
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     getAppointments () {
@@ -258,6 +291,7 @@ export default {
         data.forEach(element => {
           this.items.push({action: element.EventTime, headline: element.EventName, title: element.Description, subtitle: element.Remark1, subtitle2: element.Remark2, subtitle3: element.Remark3, EventId: element.EventId})
         })
+        this.totalData = this.items.length
       })
     },
     saveNewAppointment () {
@@ -294,7 +328,17 @@ export default {
       axios.removeAppointment(eventid).then((data) => {
         console.log(data)
         this.prevent = false
+        this.dialog2 = false
         this.getAppointments()
+      })
+    },
+    searchAppointment () {
+      axios.searchAppointment(this.search).then((data) => {
+        this.items = []
+        data.forEach(element => {
+          this.items.push({action: element.EventTime, headline: element.EventName, title: element.Description, subtitle: element.Remark1, subtitle2: element.Remark2, subtitle3: element.Remark3, EventId: element.EventId})
+        })
+        this.totalData = this.items.length
       })
     }
   }
