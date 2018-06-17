@@ -169,6 +169,14 @@ class Axios {
     const companyId = localStorage.getItem('CompanyId')
     const tableDataUrl = process.env.API_BASE + '/api/Notification?companyid=' + companyId + '&term=' + term
     return this.axios.get(tableDataUrl, {timeout: 50000})
+    .then((Response) => {
+      return Response.data
+    })
+  }
+  getContacts () {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const getContactUrl = process.env.API_BASE + '/api/Contacts?database=' + databaseName
+    return this.axios.get(getContactUrl, {timeout: 50000})
       .then((Response) => {
         return Response.data
       })
@@ -176,6 +184,28 @@ class Axios {
   demoRequestMail (fullName, email, phone, companyName) {
     const tableDataUrl = process.env.API_BASE + '/api/TryDemo?fullName=' + fullName + '&email=' + email + '&phone=' + phone + '&company=' + companyName
     return this.axios.get(tableDataUrl, {timeout: 50000})
+    .then((Response) => {
+      return Response.data
+    })
+  }
+  updateContact (id, name, number) {
+    const databaseName = localStorage.getItem('DatabaseName')
+    const contactId = id
+    const contactName = name
+    const contactNumber = number
+    if (contactId && contactName && contactNumber) {
+      const updateContactUrl = process.env.API_BASE + '/api/Contacts?database=' + databaseName + '&contactname=' + contactName + '&contactphone=' + contactNumber + '&contactid=' + contactId
+      return this.axios.put(updateContactUrl, {timeout: 50000})
+        .then((Response) => {
+          return Response.data
+        })
+    }
+  }
+  deleteContact (id) {
+    const contactId = id
+    const databaseName = localStorage.getItem('DatabaseName')
+    const deleteContactUrl = process.env.API_BASE + '/api/Contacts?database=' + databaseName + '&contactid=' + contactId
+    return this.axios.put(deleteContactUrl, {timeout: 5000})
       .then((Response) => {
         return Response.data
       })
@@ -183,9 +213,18 @@ class Axios {
   rowTotalCount (databaseName) {
     const tableDataUrl = process.env.API_BASE + '/api/TotalRecordInserted?database=' + databaseName
     return this.axios.post(tableDataUrl, {timeout: 50000})
-      .then((Response) => {
-        return Response.data
-      })
-  }
+    .then((Response) => {
+      return Response.data
+    })
+ }
+ filterContact (value) {
+  const filterValue = value
+  const databaseName = localStorage.getItem('DatabaseName')
+  const filterContactUrl = process.env.API_BASE + '/api/Contacts?database=' + databaseName + '&term=' + filterValue
+  return this.axios.get(filterContactUrl, {timeout: 5000})
+    .then((Response) => {
+      return Response.data
+    })
+}
 }
 export default new Axios()
