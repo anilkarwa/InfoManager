@@ -41,11 +41,11 @@
         prepend-icon="search"
         label="Search"
         v-model="search"
-          single-line
-          hide-details
+        single-line
+        hide-details
       ></v-text-field>
-        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
-        <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
+      <v-tooltip bottom> <router-link slot="activator" to="/appointments"><v-icon>event</v-icon></router-link><span>Appointment</span></v-tooltip>
+      <v-tooltip bottom><router-link  slot="activator" style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link><span>Home</span></v-tooltip>
     </v-toolbar>
     <v-content>
    
@@ -79,7 +79,8 @@
   
      
     </v-content>
-    <v-btn
+     <v-tooltip top><v-btn
+      slot="activator"
       fab
       bottom
       right
@@ -90,9 +91,10 @@
       style="margin-bottom:22px;z-index:100"
     >
       <v-icon>settings</v-icon>
-    </v-btn>
-    <v-btn
+    </v-btn><span>Query Table</span></v-tooltip>
+    <v-tooltip top><v-btn
       fab
+      slot="activator"
       bottom
       right
       color="indigo"
@@ -100,9 +102,9 @@
       fixed
       @click.stop="add = !add"
       style="margin-right:17%;margin-bottom:22px; z-index:100"
-    >
+     >
       <v-icon>add</v-icon>
-    </v-btn>
+     </v-btn><span>show/hide columns</span></v-tooltip>
      <v-dialog v-model="add" scrollable max-width="400px">
         <v-card>
           <v-card-title>Enable/Disable Columns</v-card-title>

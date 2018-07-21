@@ -23,7 +23,7 @@
               hide-details
             ></v-text-field>
             <span> &nbsp;Total({{totalData}})</span>
-              <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
+      <v-tooltip bottom><router-link  slot="activator" style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link><span>Home</span></v-tooltip>
           </v-toolbar>
       <v-list three-line style="margin-top:60px">
         <template v-for="(notify, index) in Notifications">
@@ -36,16 +36,17 @@
             </v-list-tile-content>
             <v-list-tile-action>
               <v-list-tile-action-text>{{ notify.NotificationDateTime }}</v-list-tile-action-text>
-              <v-btn icon color="primary"  @click="dialog3 = true; prevent = true; selectedNotification = notify.NotificationId" >
+              <v-tooltip top><v-btn icon color="primary" slot="activator"  @click="dialog3 = true; prevent = true; selectedNotification = notify.NotificationId" >
                 <v-icon>close</v-icon>
-              </v-btn>
+              </v-btn><span>Delete</span></v-tooltip>
             </v-list-tile-action>
           </v-list-tile>
           <v-divider v-if="index + 1 < Notifications.length" :key="`divider-${index}`"></v-divider>
         </template>
       </v-list>
     </div>
-    <v-btn
+    <v-tooltip top><v-btn
+      slot="activator"
       fab
       bottom
       right
@@ -55,8 +56,9 @@
       @click.stop="dialog = !dialog"
       style="margin-bottom:22px; z-index:100">
       <v-icon>add</v-icon>
-    </v-btn>
-    <v-btn
+    </v-btn><span>Add Notification</span></v-tooltip>
+    <v-tooltip top><v-btn
+      slot="activator"
       fab
       bottom
       right
@@ -67,7 +69,7 @@
       style="margin-right:17%;margin-bottom:22px"
     >
       <v-icon>perm_contact_calendar</v-icon>
-    </v-btn>
+    </v-btn><span>Contacts</span></v-tooltip>
     <v-layout row justify-center>
     
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">

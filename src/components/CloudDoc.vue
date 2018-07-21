@@ -41,8 +41,8 @@
         class="hidden-sm-and-down"
       ></v-text-field>
       <v-spacer></v-spacer>
-        <router-link to="/appointments"><v-icon>event</v-icon></router-link>
-        <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
+      <v-tooltip bottom> <router-link slot="activator" to="/appointments"><v-icon>event</v-icon></router-link><span>Appointment</span></v-tooltip>
+      <v-tooltip bottom><router-link  slot="activator" style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link><span>Home</span></v-tooltip>
     </v-toolbar>
     <v-content>
     <v-progress-circular :size="50" indeterminate color="primary" v-if="loading"></v-progress-circular>   
@@ -63,7 +63,8 @@
         </v-alert>
       </v-data-table> 
     </v-content>
-    <v-btn
+    <v-tooltip top><v-btn
+      slot="activator"
       fab
       bottom
       right
@@ -73,7 +74,7 @@
       @click.stop="dialog = !dialog"
       style="margin-bottom:22px">
       <v-icon>add</v-icon>
-    </v-btn>
+    </v-btn><span>Add Document</span></v-tooltip>
     <v-layout row justify-center>
 
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">

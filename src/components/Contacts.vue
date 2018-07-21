@@ -4,8 +4,8 @@
     <v-layout row>
       <v-flex xs12>
         <v-card>
-          <v-toolbar color="cyan" dark>
-            <v-toolbar-title>Contacts</v-toolbar-title>
+          <v-toolbar color="blue darken-1" dark>
+            <v-toolbar-title><span class="hidden-sm-and-down">Contacts</span></v-toolbar-title>
                   <v-text-field
                     v-model="search"
                     append-icon="search"
@@ -15,11 +15,12 @@
                     flat
                     solo-inverted
                     prepend-icon="search"
-                    class="hidden-sm-and-down"
                     style="margin-left:2%"
                     @input="filterContact(search)">
                   </v-text-field>
             <v-spacer></v-spacer>
+      <v-tooltip bottom> <router-link slot="activator" to="/appointments"><v-icon>event</v-icon></router-link><span>Appointment</span></v-tooltip>
+      <v-tooltip bottom><router-link  slot="activator" style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link><span>Home</span></v-tooltip>
           </v-toolbar>
           <v-list two-line>
             <v-subheader>Contacts</v-subheader>
@@ -33,14 +34,14 @@
                   <v-list-tile-sub-title>{{ contact.Phone }}</v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-btn fab dark small color="green" @click="editContact(contact.ContactId,contact.Name,contact.Phone)">
-                    <v-icon dark>add</v-icon>
-                  </v-btn>
+                  <v-tooltip top><v-btn slot="activator" fab dark small color="green" @click="editContact(contact.ContactId,contact.Name,contact.Phone)">
+                    <v-icon dark>border_color</v-icon>
+                  </v-btn><span>Edit</span></v-tooltip>
                 </v-list-tile-action>
                 <v-list-tile-action>
-                  <v-btn fab dark small color="red" @click="askForPermission(contact.ContactId)">
+                  <v-tooltip top><v-btn slot="activator" fab dark small color="red" @click="askForPermission(contact.ContactId)">
                     <v-icon dark>remove</v-icon>
-                  </v-btn>
+                  </v-btn><span>Delete</span></v-tooltip>
                 </v-list-tile-action>
               </v-list-tile>
               <v-divider v-if="index + 1 < contacts.length" :key="`divider-${index}`"></v-divider>
@@ -81,8 +82,8 @@
           <v-card-text>Are you sure to delete this contact ?</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="green darken-1" flat="flat" @click.native="conformDialog = false">Disagree</v-btn>
-            <v-btn color="green darken-1" flat="flat" @click="deleteUpdate()">Agree</v-btn>
+            <v-btn color="green darken-1" flat="flat" @click.native="conformDialog = false">No,Cancel</v-btn>
+            <v-btn color="red darken-1" flat="flat" @click="deleteUpdate()">Yes,Delete</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

@@ -26,9 +26,10 @@
               hide-details
             ></v-text-field>
              <span> &nbsp;Total({{totalData}})</span>
-              <router-link style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link>
+          <v-tooltip bottom><router-link  slot="activator" style="margin-left:10px;" to="/menu"><v-icon>home</v-icon></router-link><span>Home</span></v-tooltip>
           </v-toolbar>
-              <v-btn
+             <v-tooltip top> <v-btn
+               slot="activator"
                 fab
                 bottom
                 right
@@ -39,7 +40,7 @@
                 style="margin-bottom:22px;z-index:100"
                 >
                 <v-icon>add</v-icon>
-                </v-btn>
+                </v-btn><span>Add Appointment</span></v-tooltip>
           <v-list three-line style="margin-top:60px">
             <template v-for="(item, index) in items">
               <v-list-tile :key="index" avatar ripple @click="OnAppointmentClick(item.EventId)">
@@ -51,9 +52,9 @@
                 </v-list-tile-content>
                 <v-list-tile-action>
                   <v-list-tile-action-text>{{ item.action }}</v-list-tile-action-text>
-                  <v-btn icon color="primary"  @click="dialog2 = true; prevent = true; selectedAppointment = item.EventId" >
+                  <v-tooltip top><v-btn icon slot="activator" color="primary"  @click="dialog2 = true; prevent = true; selectedAppointment = item.EventId" >
                     <v-icon>close</v-icon>
-                  </v-btn>
+                  </v-btn><span>Delete</span></v-tooltip>
                 </v-list-tile-action>
               </v-list-tile>
               <v-divider v-if="index + 1 < items.length" :key="`divider-${index}`"></v-divider>
